@@ -1,5 +1,5 @@
-const { configure } = require('quasar/wrappers')
 const path = require('path')
+const { configure } = require('quasar/wrappers')
 
 module.exports = configure((/* ctx */) => {
   return {

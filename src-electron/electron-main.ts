@@ -1,6 +1,6 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
 import path from 'path'
 import os from 'os'
+import { app, BrowserWindow, nativeTheme } from 'electron'
 
 const platform = process.platform || os.platform()
 
