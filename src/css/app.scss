@@ -26,6 +26,9 @@ html[lang^='ko'] {
 }
 
 // Helper
+.line-height-1 {
+  line-height: 1;
+}
 .non-draggable {
   -webkit-user-drag: none;
 }

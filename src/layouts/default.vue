@@ -31,7 +31,8 @@
             :key="'btn-' + i"
             :class="{
               active: isItemActive(item.to),
-              'q-ml-sm': i > 0
+              'q-ml-sm': i > 0,
+              'non-draggable': !!item.to
             }"
             :icon="item.icon"
             :to="item.to"

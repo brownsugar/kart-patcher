@@ -25,7 +25,7 @@
         <q-card-actions>
           <q-btn
             :to="`/region/${region.code}`"
-            class="full-width"
+            class="full-width non-draggable"
             color="generic"
             label="查看詳情"
             icon-right="fa-solid fa-circle-arrow-right"

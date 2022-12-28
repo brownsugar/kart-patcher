@@ -109,7 +109,7 @@
               <div class="text-accent">
                 下載檔案：zeta_kr_loading.rho
               </div>
-              <div class="text-body2 text-generic">
+              <div class="text-generic text-caption">
                 2.5 MB / 230.5 MB (9.9 MB/s)
               </div>
             </div>
@@ -118,14 +118,14 @@
                 class="task-progress"
                 color="accent"
                 track-color="secondary"
-                size="20px"
+                size="18px"
                 :value="taskProgress / 100"
                 :indeterminate="false"
                 rounded
               >
                 <div class="absolute-full flex flex-center">
                   <div
-                    class="text-caption"
+                    class="text-caption line-height-1"
                     :class="[taskProgress < 50 ? 'text-generic' : 'text-white']"
                   >
                     {{ taskProgress }}%
