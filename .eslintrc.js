@@ -14,5 +14,9 @@ module.exports = {
   },
   rules: {
     '@typescript-eslint/no-var-requires': 'off',
+    'vue/no-v-html': 'off',
+    'vue/max-attributes-per-line': ['error', {
+      singleline: 1
+    }]
   }
 }

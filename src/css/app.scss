@@ -1,1 +1,52 @@
-// app global css in SCSS form
+html[lang^="en"] {
+  font-family: 'Roboto', sans-serif;
+}
+html[lang^="zh"] {
+  font-family: 'Roboto', 'Noto Sans TC', 'Noto Sans SC', sans-serif;
+}
+html[lang^="ko"] {
+  font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+}
+
+// Theme
+:root {
+  --shadow: 0 3px 20px #{rgba(#000, 0.05)};
+}
+.text-generic {
+  color: $generic !important;
+}
+.bg-generic {
+  background: $generic !important;
+}
+.text-light {
+  color: $light !important;
+}
+.bg-light {
+  background: $light !important;
+}
+
+// Helper
+.non-draggable {
+  -webkit-user-drag: none;
+}
+.half-rounded-borders {
+  border-radius: $generic-border-radius / 2;
+}
+.shadow-generic {
+  box-shadow: var(--shadow);
+}
+.shadow-backdrop {
+  position: relative;
+
+  &:before {
+    content: '';
+    left: 24px;
+    right: 24px;
+    top: 12px;
+    position: absolute;
+    background: rgba(#FFF, .65);
+    height: 100%;
+    border-radius: $generic-border-radius;
+    box-shadow: var(--shadow);
+  }
+}

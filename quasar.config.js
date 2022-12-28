@@ -44,8 +44,12 @@ module.exports = configure((/* ctx */) => {
     },
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {
-      config: {},
-      iconSet: 'fontawesome-v6',
+      config: {
+        ripple: {
+          early: true
+        }
+      },
+      iconSet: 'fontawesome-v6-pro',
       plugins: []
     },
     // https://v2.quasar.dev/options/animations
