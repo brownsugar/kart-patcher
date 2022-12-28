@@ -1,16 +1,16 @@
-html[lang^="en"] {
-  font-family: 'Roboto', sans-serif;
+html[lang^='en'] {
+  font-family: Roboto, sans-serif;
 }
-html[lang^="zh"] {
-  font-family: 'Roboto', 'Noto Sans TC', 'Noto Sans SC', sans-serif;
+html[lang^='zh'] {
+  font-family: Roboto, 'Noto Sans TC', 'Noto Sans SC', sans-serif;
 }
-html[lang^="ko"] {
-  font-family: 'Roboto', 'Noto Sans KR', sans-serif;
+html[lang^='ko'] {
+  font-family: Roboto, 'Noto Sans KR', sans-serif;
 }
 
 // Theme
 :root {
-  --shadow: 0 3px 20px #{rgba(#000, 0.05)};
+  --shadow: 0 3px 20px #{rgba(#000, .05)};
 }
 .text-generic {
   color: $generic !important;
@@ -38,14 +38,14 @@ html[lang^="ko"] {
 .shadow-backdrop {
   position: relative;
 
-  &:before {
-    content: '';
-    left: 24px;
-    right: 24px;
-    top: 12px;
+  &::before {
     position: absolute;
-    background: rgba(#FFF, .65);
+    top: 12px;
+    right: 24px;
+    left: 24px;
     height: 100%;
+    content: '';
+    background: rgba(#FFF, .65);
     border-radius: $generic-border-radius;
     box-shadow: var(--shadow);
   }

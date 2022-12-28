@@ -169,6 +169,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .task-progress {
+
   :deep(.q-linear-progress__track) {
     opacity: 1;
   }

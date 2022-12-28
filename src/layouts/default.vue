@@ -169,8 +169,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .layout-header {
-  border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
 
   .q-toolbar {
     min-height: 60px;
@@ -186,12 +186,12 @@ export default defineComponent({
   pointer-events: auto;
 
   .indicator {
+    position: absolute;
+    bottom: 100%;
     display: block;
     width: 80px;
     height: 10px;
     background: url('assets/images/indicator.svg') center/cover no-repeat;
-    position: absolute;
-    bottom: 100%;
   }
 }
 </style>
