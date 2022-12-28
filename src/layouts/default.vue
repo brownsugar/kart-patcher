@@ -1,11 +1,11 @@
 <template>
   <q-layout view="hHh LpR fFf">
     <q-header
-      class="layout-header bg-primary rounded-borders q-pb-md"
+      class="layout-header rounded-borders q-pb-md"
     >
       <q-toolbar
         ref="toolbar"
-        class="main-header q-electron-drag q-px-lg"
+        class="bg-primary q-electron-drag q-px-lg"
       >
         <q-avatar>
           <q-icon name="fa-solid fa-wrench" />
