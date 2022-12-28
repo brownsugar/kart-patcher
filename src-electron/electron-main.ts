@@ -1,15 +1,18 @@
 import path from 'path'
 import os from 'os'
+import fs from 'fs'
 import { app, BrowserWindow, nativeTheme } from 'electron'
+import { initialize, enable } from '@electron/remote/main'
 
 const platform = process.platform || os.platform()
 
 try {
   if (platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
-    require('fs').unlinkSync(
+    fs.unlinkSync(
       path.join(app.getPath('userData'), 'DevTools Extensions')
     )
   }
+  initialize()
 } catch (_) {}
 
 let mainWindow: BrowserWindow | undefined
@@ -24,9 +27,12 @@ function createWindow () {
     webPreferences: {
       contextIsolation: true,
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
-      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD)
+      preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+      sandbox: false
     }
   })
+
+  enable(mainWindow.webContents)
 
   mainWindow.loadURL(process.env.APP_URL)
 

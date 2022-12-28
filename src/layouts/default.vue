@@ -115,12 +115,16 @@ const headerMenuItems = [
   {
     icon: 'fa-solid fa-minus',
     label: 'Minimize',
-    method: () => {}
+    method: () => {
+      window.__KART_PATCHER__.app.minimize()
+    }
   },
   {
     icon: 'fa-solid fa-xmark',
     label: 'Close',
-    method: () => {}
+    method: () => {
+      window.__KART_PATCHER__.app.close()
+    }
   }
 ]
 
