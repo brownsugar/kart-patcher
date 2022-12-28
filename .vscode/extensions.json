@@ -3,12 +3,11 @@
     "dbaeumer.vscode-eslint",
     "editorconfig.editorconfig",
     "vue.volar",
-    "wayou.vscode-todo-highlight"
+    "gruntfuggly.todo-tree",
+    "stylelint.vscode-stylelint"
   ],
   "unwantedRecommendations": [
     "octref.vetur",
-    "hookyqr.beautify",
-    "dbaeumer.jshint",
-    "ms-vscode.vscode-typescript-tslint-plugin"
+    "vscode.typescript-language-features"
   ]
 }
