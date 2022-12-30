@@ -1,7 +1,7 @@
 import path from 'path'
 import os from 'os'
 import fs from 'fs'
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow, nativeTheme, shell } from 'electron'
 import { initialize, enable } from '@electron/remote/main'
 
 const platform = process.platform || os.platform()
@@ -31,14 +31,18 @@ function createWindow () {
       sandbox: false
     }
   })
-
-  enable(mainWindow.webContents)
-
   mainWindow.loadURL(process.env.APP_URL)
 
+  enable(mainWindow.webContents)
   if (process.env.DEBUGGING) {
     mainWindow.webContents.openDevTools()
   }
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url)
+    return {
+      action: 'deny'
+    }
+  })
 
   mainWindow.on('closed', () => {
     mainWindow = undefined
