@@ -4,7 +4,7 @@
       <q-list class="text-generic">
         <q-item
           v-for="page in pages"
-          :key="page.path"
+          :key="page.name"
           v-ripple
           class="half-rounded-borders non-draggable"
           active-class="text-light bg-primary"
@@ -48,6 +48,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import type { RouteLocationNormalized } from 'vue-router'
 
 export const settingPages = [
   {
@@ -73,20 +74,28 @@ export const settingPages = [
     description: '查看程式作者及版本資訊。',
     icon: 'fa-solid fa-circle-info',
     path: '/setting/about'
-  },
+  }
+]
+let fromRoute: RouteLocationNormalized
+
+export default defineComponent({
+  name: 'PageSetting',
+  beforeRouteEnter (_to, from, next) {
+    fromRoute = from
+    next()
+  }
+})
+</script>
+<script lang="ts" setup>
+const pages = [
+  ...settingPages,
   {
     name: '返回',
     description: '返回主頁面。',
     icon: 'fa-solid fa-circle-arrow-left',
-    path: '/'
+    path: fromRoute?.path ?? '/'
   }
 ]
-export default defineComponent({
-  name: 'PageSetting'
-})
-</script>
-<script lang="ts" setup>
-const pages = settingPages
 </script>
 
 <style lang="scss" scoped>
