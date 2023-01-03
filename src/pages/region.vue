@@ -145,7 +145,7 @@ import { defineComponent, ref, computed, onBeforeMount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import RegionStatus from 'components/region-status.vue'
-import { useRegionStore } from 'src/stores/region'
+import { useRegionStore } from 'stores/region'
 
 const { regions } = storeToRefs(useRegionStore())
 const route = useRoute()

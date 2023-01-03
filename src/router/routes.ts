@@ -1,5 +1,5 @@
 import { RouteRecordRaw } from 'vue-router'
-import { settingPages } from 'src/pages/setting.vue'
+import { settingPages } from 'pages/setting.vue'
 
 const settingChildComponents = import.meta.glob('pages/setting/*.vue')
 const routes: RouteRecordRaw[] = [
@@ -17,7 +17,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'setting',
-        component: () => import('src/pages/setting.vue'),
+        component: () => import('pages/setting.vue'),
         redirect: settingPages[0].path,
         children: settingPages.map(page => ({
           path: page.path,

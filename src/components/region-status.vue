@@ -16,8 +16,8 @@
 
 <script lang="ts" setup>
 import { PropType, computed } from 'vue'
-import { regionStatusLabel } from 'src/stores/region'
-import type { regionStatusT } from 'src/stores/region'
+import { regionStatusLabel } from 'stores/region'
+import type { regionStatusT } from 'stores/region'
 
 const props = defineProps({
   value: {

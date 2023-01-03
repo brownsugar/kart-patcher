@@ -43,7 +43,7 @@
 <script lang="ts" setup>
 import { defineComponent } from 'vue'
 import RegionStatus from 'components/region-status.vue'
-import { useRegionStore } from 'src/stores/region'
+import { useRegionStore } from 'stores/region'
 
 const { regions } = useRegionStore()
 </script>
