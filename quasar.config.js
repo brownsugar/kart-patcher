@@ -50,7 +50,9 @@ module.exports = configure((/* ctx */) => {
         }
       },
       iconSet: 'fontawesome-v6-pro',
-      plugins: []
+      plugins: [
+        'Notify'
+      ]
     },
     // https://v2.quasar.dev/options/animations
     animations: [],

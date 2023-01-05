@@ -1,8 +1,10 @@
 import path from 'path'
 import os from 'os'
 import fs from 'fs'
-import { app, BrowserWindow, nativeTheme, shell } from 'electron'
+import { app, BrowserWindow, nativeTheme, shell, ipcMain } from 'electron'
 import { initialize, enable } from '@electron/remote/main'
+import Store from 'electron-store'
+import { dialogHandlers } from './ipc/dialog'
 
 const platform = process.platform || os.platform()
 
@@ -13,6 +15,7 @@ try {
     )
   }
   initialize()
+  Store.initRenderer()
 } catch (_) {}
 
 let mainWindow: BrowserWindow | undefined
@@ -25,7 +28,6 @@ function createWindow () {
     useContentSize: true,
     frame: false,
     webPreferences: {
-      contextIsolation: true,
       // More info: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/electron-preload-script
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
       sandbox: false
@@ -42,6 +44,18 @@ function createWindow () {
     return {
       action: 'deny'
     }
+  })
+
+  const handlers = [
+    dialogHandlers
+  ]
+  handlers.forEach((handler) => {
+    handler.forEach(({ channel, listener }) => {
+      ipcMain.handle(channel, (e, args = {}) => {
+        args.browserWindow = mainWindow
+        return listener(e, args)
+      })
+    })
   })
 
   mainWindow.on('closed', () => {

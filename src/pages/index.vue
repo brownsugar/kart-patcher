@@ -42,10 +42,11 @@
 
 <script lang="ts" setup>
 import { defineComponent } from 'vue'
+import { storeToRefs } from 'pinia'
 import RegionStatus from 'components/region-status.vue'
 import { useRegionStore } from 'stores/region'
 
-const { regions } = useRegionStore()
+const { regions } = storeToRefs(useRegionStore())
 </script>
 <script lang="ts">
 export default defineComponent({

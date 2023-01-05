@@ -31,13 +31,13 @@
     </div>
     <div class="col-grow q-ml-lg shadow-backdrop">
       <div class="bg-white relative-position full-height q-pa-md rounded-borders shadow-generic">
-        <div class="bg-info text-light flex items-center q-pa-md half-rounded-borders">
+        <div class="bg-info text-light flex items-center q-mb-sm q-pa-md half-rounded-borders">
           <q-icon
             name="fa-solid fa-circle-info"
             size="xs"
           />
           <div class="q-ml-sm text-body-1">
-            選擇各伺服器遊戲主程式安裝路徑。
+            {{ activePage?.description }}
           </div>
         </div>
         <router-view />
@@ -47,8 +47,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import type { RouteLocationNormalized } from 'vue-router'
+import { defineComponent, computed } from 'vue'
+import { RouteLocationNormalized, useRoute } from 'vue-router'
 
 export const settingPages = [
   {
@@ -96,6 +96,9 @@ const pages = [
     path: fromRoute?.path ?? '/'
   }
 ]
+
+const route = useRoute()
+const activePage = computed(() => settingPages.find(page => page.path === route.path))
 </script>
 
 <style lang="scss" scoped>
