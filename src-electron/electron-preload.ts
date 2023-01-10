@@ -4,16 +4,22 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { BrowserWindow } from '@electron/remote'
 import Store from 'electron-store'
 import type { OpenDialogOptions } from 'electron'
+import KartPin from './lib/kart-pin'
+import KartPatchSocket from './lib/kart-patch-socket'
+import type { IKartPin } from './lib/kart-pin'
+import type { IKartPatchServerInfo } from './lib/kart-patch-socket'
 
 declare global {
   interface Window {
-    __KART_PATCHER__: IKartPatcher
+    __KART_PATCHER__: IKartPatcherApi
   }
 }
-interface IKartPatcher {
+interface IKartPatcherApi {
+  minimize: () => void
+  close: () => void
   app: {
-    minimize: () => void
-    close: () => void
+    parsePin: (path: string, filename: string) => Promise<IKartPin>
+    connectPatchSocket: (host: string, port: number) => Promise<IKartPatchServerInfo>
   }
   dialog: {
     selectDirectory: (options?: OpenDialogOptions) => Promise<any>
@@ -50,13 +56,21 @@ const preferenceStore = new Store({
   }
 })
 
-const api: IKartPatcher = {
+const api: IKartPatcherApi = {
+  minimize: () => {
+    BrowserWindow.getFocusedWindow()?.minimize()
+  },
+  close: () => {
+    BrowserWindow.getFocusedWindow()?.close()
+  },
   app: {
-    minimize () {
-      BrowserWindow.getFocusedWindow()?.minimize()
+    parsePin: (path: string, filename: string) => {
+      const pin = new KartPin(path, filename)
+      return pin.parse()
     },
-    close () {
-      BrowserWindow.getFocusedWindow()?.close()
+    connectPatchSocket: (host: string, port: number) => {
+      const socket = new KartPatchSocket(host, port)
+      return socket.connect()
     }
   },
   dialog: {

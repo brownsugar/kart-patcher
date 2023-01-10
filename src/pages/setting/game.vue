@@ -27,12 +27,12 @@
 import { defineComponent } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useQuasar } from 'quasar'
-import { useRegionStore } from 'stores/region'
+import { useRegionStore, regionPresets } from 'stores/region'
 import type { regionCodeT } from 'stores/region'
 
 const regionStore = useRegionStore()
 const { regions } = storeToRefs(regionStore)
-const { updateClientPath } = regionStore
+const { updateClientPath, checkStatus } = regionStore
 const $q = useQuasar()
 
 const selectPath = async (regionCode: regionCodeT) => {
@@ -42,12 +42,12 @@ const selectPath = async (regionCode: regionCodeT) => {
   const { normalize, resolve } = window.__KART_PATCHER__.node.path
   const { existsSync } = window.__KART_PATCHER__.node.fs
   const path = normalize(pathRaw)
-  const executable = regions.value.find(r => r.code === regionCode)?.executable
-  if (!path || !existsSync(path) || !executable) {
+  if (!path || !existsSync(path)) {
     return
   }
 
-  const installed = existsSync(resolve(path, executable))
+  const pinFile = regionPresets[regionCode].pinFile
+  const installed = existsSync(resolve(path, pinFile))
   if (installed) {
     $q.notify({
       classes: 'half-rounded-borders',
@@ -66,6 +66,7 @@ const selectPath = async (regionCode: regionCodeT) => {
     })
   }
   updateClientPath(regionCode, path)
+  checkStatus(regionCode)
 }
 </script>
 <script lang="ts">

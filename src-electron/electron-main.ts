@@ -4,6 +4,7 @@ import fs from 'fs'
 import { app, BrowserWindow, nativeTheme, shell, ipcMain } from 'electron'
 import { initialize, enable } from '@electron/remote/main'
 import Store from 'electron-store'
+import log from 'electron-log'
 import { dialogHandlers } from './ipc/dialog'
 
 const platform = process.platform || os.platform()
@@ -16,6 +17,7 @@ try {
   }
   initialize()
   Store.initRenderer()
+  log.initialize({ preload: true })
 } catch (_) {}
 
 let mainWindow: BrowserWindow | undefined

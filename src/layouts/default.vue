@@ -117,14 +117,14 @@ const headerMenuItems = [
     icon: 'fa-solid fa-minus',
     label: 'Minimize',
     method: () => {
-      window.__KART_PATCHER__.app.minimize()
+      window.__KART_PATCHER__.minimize()
     }
   },
   {
     icon: 'fa-solid fa-xmark',
     label: 'Close',
     method: () => {
-      window.__KART_PATCHER__.app.close()
+      window.__KART_PATCHER__.close()
     }
   }
 ]

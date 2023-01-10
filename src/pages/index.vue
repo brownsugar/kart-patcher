@@ -19,7 +19,7 @@
             v-html="region.name.split(' ').join('<br>')"
           />
           <RegionStatus
-            :value="region.status"
+            :code="region.code"
           />
         </q-card-section>
         <q-card-actions>

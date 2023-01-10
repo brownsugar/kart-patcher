@@ -14,7 +14,7 @@
           {{ region?.name }}
         </div>
         <RegionStatus
-          :value="region?.status"
+          :code="region?.code"
         />
       </div>
       <div class="column bg-white rounded-borders q-mt-md shadow-generic">

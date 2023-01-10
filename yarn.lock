@@ -376,6 +376,13 @@
     "@types/connect" "*"
     "@types/node" "*"
 
+"@types/buffer-reader@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@types/buffer-reader/-/buffer-reader-0.1.0.tgz#7c352dd502b98b3df3521efc9a946a270b5d4f10"
+  integrity sha512-cYi/67qQTBtlY9auLyhmY/S60mEC013XXAz3YgUUoGNkfh7rXNAsEwws0KGEqYz4miDDeGrOyQ5jClMgWgajfg==
+  dependencies:
+    "@types/node" "*"
+
 "@types/cacheable-request@^6.0.1":
   version "6.0.3"
   resolved "https://registry.yarnpkg.com/@types/cacheable-request/-/cacheable-request-6.0.3.tgz#a430b3260466ca7b5ca5bfd735693b36e7a9d183"
@@ -1031,6 +1038,11 @@ buffer-crc32@^0.2.1, buffer-crc32@^0.2.13, buffer-crc32@~0.2.3:
   resolved "https://registry.yarnpkg.com/buffer-crc32/-/buffer-crc32-0.2.13.tgz#0d333e3f00eac50aa1454abd30ef8c2a5d9a7242"
   integrity sha512-VO9Ht/+p3SN7SKWqcrgEzjGbRSJYTx+Q1pTQC0wrWqHx0vpJraQ6GtHx8tvcg1rlK1byhU5gccxgOgj7B0TDkQ==
 
+buffer-reader@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/buffer-reader/-/buffer-reader-0.1.0.tgz#62953f955bbc50d8aa8e875f9789326a3b0c7644"
+  integrity sha512-VAE5FgftPK4/JPMvevgJ7uef1p91reKM7BpHwpO0Ci0494VqPcsSh1BLgF5YHAQ72w0ZZBcQht4+5W/+NKOpTA==
+
 buffer@^5.5.0:
   version "5.7.1"
   resolved "https://registry.yarnpkg.com/buffer/-/buffer-5.7.1.tgz#ba62e7c13133053582197160851a8f648e99eed0"
@@ -1595,6 +1607,11 @@ ejs@^3.1.7:
   integrity sha512-/sXZeMlhS0ArkfX2Aw780gJzXSMPnKjtspYZv+f3NiKLlubezAHDU5+9xz6gd3/NhG3txQCo6xlglmTS+oTGEQ==
   dependencies:
     jake "^10.8.5"
+
+electron-log@^5.0.0-beta.14:
+  version "5.0.0-beta.14"
+  resolved "https://registry.yarnpkg.com/electron-log/-/electron-log-5.0.0-beta.14.tgz#2101b94ad1ce0d385b144661fc4308c59f4bfe52"
+  integrity sha512-FghSQDjRmLl/W/8YAAaPdSGtMVYO/5Wk+daKprANOgjk4808OuQulNTazMQZmVGtcNDF8r9s8I1qMWmoSz9YDQ==
 
 electron-store@^8.1.0:
   version "8.1.0"

@@ -6,9 +6,9 @@
 import { onBeforeMount } from 'vue'
 import { useRegionStore } from 'stores/region'
 
-const { initRegionState } = useRegionStore()
+const { initState } = useRegionStore()
 
 onBeforeMount(() => {
-  initRegionState()
+  initState()
 })
 </script>

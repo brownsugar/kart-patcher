@@ -4,42 +4,51 @@
     :color="color"
     rounded
   >
-    <q-icon
-      v-if="icon"
-      :name="icon"
-      class="q-mr-xs"
-      color="white"
+    <q-spinner-ios
+      v-if="region.refreshing"
     />
-    <span>{{ regionStatusLabel[value] }}</span>
+    <template v-else>
+      <q-icon
+        v-if="icon"
+        :name="icon"
+        class="q-mr-xs"
+        color="white"
+      />
+      <span>{{ regionStatusLabel[region.status] }}</span>
+    </template>
   </q-badge>
 </template>
 
 <script lang="ts" setup>
 import { PropType, computed } from 'vue'
-import { regionStatusLabel } from 'stores/region'
-import type { regionStatusT } from 'stores/region'
+import { storeToRefs } from 'pinia'
+import { useRegionStore, regionStatusLabel } from 'stores/region'
+import type { regionCodeT } from 'stores/region'
 
 const props = defineProps({
-  value: {
-    type: Number as PropType<regionStatusT>,
-    default: 300
+  code: {
+    type: String as PropType<regionCodeT>,
+    default: ''
   }
 })
 
+const store = storeToRefs(useRegionStore())
+const region = computed(() => store[props.code].value)
+
 const color = computed(() => {
-  if (props.value === 100) {
+  if (region.value.status === 100) {
     return 'positive'
   }
-  if (props.value >= 200 && props.value < 300) {
+  if (region.value.status >= 200 && region.value.status < 300) {
     return 'negative'
   }
   return 'grey'
 })
 const icon = computed(() => {
-  if (props.value === 100) {
+  if (region.value.status === 100) {
     return 'fa-solid fa-circle-check'
   }
-  if (props.value >= 200 && props.value < 300) {
+  if (region.value.status >= 200 && region.value.status < 300) {
     return 'fa-solid fa-exclamation-triangle'
   }
   return null
