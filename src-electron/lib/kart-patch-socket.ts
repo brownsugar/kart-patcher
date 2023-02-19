@@ -7,15 +7,13 @@ export interface IKartPatchServerInfo {
   version: number
 }
 
-class KartPatchSocket {
-  host: string
-  port: number
+export default class KartPatchSocket {
   socket: Socket | null = null
 
-  constructor (host: string, port: number) {
-    this.host = host
-    this.port = port
-  }
+  constructor (
+    readonly host: string,
+    readonly port: number
+  ) {}
 
   connect () {
     return new Promise<IKartPatchServerInfo>((resolve, reject) => {
@@ -54,5 +52,3 @@ class KartPatchSocket {
     })
   }
 }
-
-export default KartPatchSocket

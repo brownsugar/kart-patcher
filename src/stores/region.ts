@@ -10,14 +10,15 @@ export type regionStatusT = keyof typeof regionStatusLabel
 export interface IRegionPreset {
   flag: string
   name: string
-  defaultRoot: {
-    regPath: string
-    regKey: string
-  }
   pinFile: string
   defaultServer: {
     host: string
     port: number
+  }
+  registry: {
+    path: string
+    rootPathKey: string
+    executableKey: string
   }
   patchNewsUrl: string
 }
@@ -45,42 +46,45 @@ export const regionPresets: Record<regionCodeT, IRegionPreset> = {
     flag: flagTw,
     name: 'Taiwanese server',
     // name: '台服',
-    defaultRoot: {
-      regPath: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Gamania\\PopKart\\M01',
-      regKey: 'InstallPath'
-    },
     pinFile: 'KartRider.pin',
     defaultServer: {
       host: '210.208.95.160',
       port: 39311
+    },
+    registry: {
+      path: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Gamania\\PopKart\\M01',
+      rootPathKey: 'InstallPath',
+      executableKey: 'Executable'
     },
     patchNewsUrl: 'https://kinf.cc/BUeHl'
   },
   kr: {
     flag: flagKr,
     name: 'Korean server',
-    defaultRoot: {
-      regPath: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Nexon\\KartRider\\M01',
-      regKey: 'RootPath'
-    },
     pinFile: 'KartRider.pin',
     defaultServer: {
       host: '218.153.7.16',
       port: 39311
+    },
+    registry: {
+      path: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Nexon\\KartRider\\M01',
+      rootPathKey: 'RootPath',
+      executableKey: 'Executable'
     },
     patchNewsUrl: 'https://kinf.cc/SpndE'
   },
   cn: {
     flag: flagCn,
     name: 'Chinese server',
-    defaultRoot: {
-      regPath: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\TianCity\\PopKart\\M01',
-      regKey: 'InstallPath'
-    },
     pinFile: 'KartRider.pin',
     defaultServer: {
       host: '61.164.61.66',
       port: 39311
+    },
+    registry: {
+      path: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\TianCity\\PopKart\\M01',
+      rootPathKey: 'InstallPath',
+      executableKey: 'Executable'
     },
     patchNewsUrl: 'https://kinf.cc/t3bMn'
   }

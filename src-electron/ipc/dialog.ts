@@ -5,7 +5,10 @@ export const dialogHandlers: IIpcConfig[] = [
   {
     channel: 'dialog:selectDirectory',
     listener: async (_e, args) => {
-      const { filePaths } = await dialog.showOpenDialog(args?.browserWindow, {
+      if (!args?.browserWindow) {
+        return ''
+      }
+      const { filePaths } = await dialog.showOpenDialog(args.browserWindow, {
         properties: ['openDirectory'],
         ...args?.options
       })

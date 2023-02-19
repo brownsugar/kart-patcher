@@ -20,13 +20,15 @@ export interface IKartPin {
   }
 }
 
-class KartPin {
-  pinFile: string
+export default class KartPin {
+  readonly pinFile: string
 
   constructor (path: string, filename: string) {
     const filepath = resolve(path, filename)
     if (!existsSync(filepath)) {
-      throw new Error('Invalid pin file path!')
+      throw new Error('INVALID_PIN_FILE', {
+        cause: filepath
+      })
     }
     this.pinFile = filepath
   }
@@ -82,7 +84,7 @@ class KartPin {
     return info
   }
 
-  async uncompress (filepath: string) {
+  private async uncompress (filepath: string) {
     const fileBuffer = await readFile(filepath)
     const fileReader = new BufferManager(fileBuffer)
     const dataLength = fileReader.nextUInt32LE()
@@ -91,7 +93,9 @@ class KartPin {
     const dataReader = new BufferManager(dataBuffer)
     const header = dataReader.nextUInt8()
     if (header !== 0x53) {
-      throw new Error('Invalid pin header found!')
+      throw new Error('INVALID_PIN_HEADER', {
+        cause: filepath
+      })
     }
 
     const flag = dataReader.nextUInt8()
@@ -109,7 +113,7 @@ class KartPin {
     return data
   }
 
-  decrypt (buffer: Buffer, key: number) {
+  private decrypt (buffer: Buffer, key: number) {
     const uintArray1 = new Uint32Array(17)
     const uintArray2 = new Uint8Array(68)
 
@@ -140,5 +144,3 @@ class KartPin {
     return buffer
   }
 }
-
-export default KartPin

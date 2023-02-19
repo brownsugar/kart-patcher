@@ -1,6 +1,6 @@
 import BufferReader from 'buffer-reader'
 
-class BufferManager extends BufferReader {
+export default class BufferManager extends BufferReader {
   nextBool () {
     return this.nextByte() === 1
   }
@@ -29,5 +29,3 @@ class BufferManager extends BufferReader {
     return this.nextBuffer(length * 2).toString('utf16le')
   }
 }
-
-export default BufferManager

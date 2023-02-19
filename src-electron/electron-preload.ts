@@ -6,8 +6,10 @@ import Store from 'electron-store'
 import type { OpenDialogOptions } from 'electron'
 import KartPin from './lib/kart-pin'
 import KartPatchSocket from './lib/kart-patch-socket'
+import KartPatcher from './lib/kart-patcher'
 import type { IKartPin } from './lib/kart-pin'
 import type { IKartPatchServerInfo } from './lib/kart-patch-socket'
+import type { IKartPatcherEventCallback } from './lib/kart-patcher'
 
 declare global {
   interface Window {
@@ -15,14 +17,18 @@ declare global {
   }
 }
 interface IKartPatcherApi {
-  minimize: () => void
-  close: () => void
+  minimize (): void
+  close (): void
   app: {
-    parsePin: (path: string, filename: string) => Promise<IKartPin>
-    connectPatchSocket: (host: string, port: number) => Promise<IKartPatchServerInfo>
+    parsePin (...args: ConstructorParameters<typeof KartPin>): Promise<IKartPin>
+    connectPatchSocket (...args: ConstructorParameters<typeof KartPatchSocket>): Promise<IKartPatchServerInfo>
+    patcher: {
+      init (...args: ConstructorParameters<typeof KartPatcher>): void
+      off (): void
+    } & IKartPatcherEventCallback
   }
   dialog: {
-    selectDirectory: (options?: OpenDialogOptions) => Promise<any>
+    selectDirectory (options?: OpenDialogOptions): Promise<any>
   }
   store: {
     preference: {
@@ -64,13 +70,34 @@ const api: IKartPatcherApi = {
     BrowserWindow.getFocusedWindow()?.close()
   },
   app: {
-    parsePin: (path: string, filename: string) => {
-      const pin = new KartPin(path, filename)
+    parsePin: (...args) => {
+      const pin = new KartPin(...args)
       return pin.parse()
     },
-    connectPatchSocket: (host: string, port: number) => {
-      const socket = new KartPatchSocket(host, port)
+    connectPatchSocket: (...args) => {
+      const socket = new KartPatchSocket(...args)
       return socket.connect()
+    },
+    patcher: {
+      init: (...args) => {
+        ipcRenderer
+          .send('patcher:init', {
+            patchUrl: args[0],
+            version: args[1],
+            localPath: args[2]
+          })
+      },
+      on: (event, listener) => {
+        const cbFn: Parameters<typeof ipcRenderer.on>[1] = (_event, data) => {
+          if (data.event === event) {
+            listener(data.payload)
+          }
+        }
+        ipcRenderer.on('patcher:event', cbFn)
+      },
+      off: () => {
+        ipcRenderer.removeAllListeners('patcher:event')
+      }
     }
   },
   dialog: {

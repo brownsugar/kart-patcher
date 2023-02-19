@@ -6,6 +6,7 @@ import { initialize, enable } from '@electron/remote/main'
 import Store from 'electron-store'
 import log from 'electron-log'
 import { dialogHandlers } from './ipc/dialog'
+import { patcherHandlers } from './ipc/patcher'
 
 const platform = process.platform || os.platform()
 
@@ -49,14 +50,22 @@ function createWindow () {
   })
 
   const handlers = [
-    dialogHandlers
+    dialogHandlers,
+    patcherHandlers
   ]
   handlers.forEach((handler) => {
-    handler.forEach(({ channel, listener }) => {
-      ipcMain.handle(channel, (e, args = {}) => {
-        args.browserWindow = mainWindow
-        return listener(e, args)
-      })
+    handler.forEach(({ channel, response, listener }) => {
+      if (response !== false) {
+        ipcMain.handle(channel, (e, args = {}) => {
+          args.browserWindow = mainWindow
+          return listener(e, args)
+        })
+      } else {
+        ipcMain.on(channel, (e, args = {}) => {
+          args.browserWindow = mainWindow
+          return listener(e, args)
+        })
+      }
     })
   })
 
