@@ -17,11 +17,10 @@ class KartCrc {
     if (filesize) {
       while (true) {
         let bytesToRead
-        if (filesize >= 0x10000) {
+        if (filesize >= 0x10000)
           bytesToRead = 0x10000
-        } else {
+        else
           bytesToRead = filesize
-        }
 
         const buffer = Buffer.alloc(bytesToRead)
         const { bytesRead } = await file.read(buffer, 0, bytesToRead)
@@ -33,9 +32,8 @@ class KartCrc {
 
         result = this.calculateChunk(result, buffer, bytesRead)
         filesize -= bytesRead
-        if (!filesize) {
+        if (!filesize)
           break
-        }
       }
     }
 
@@ -48,16 +46,14 @@ class KartCrc {
     let v4 = prevResult & 0xFFFF // convert int to int16
     let v5 = prevResult >>> 16
 
-    if (!buffer) {
+    if (!buffer)
       return 1
-    }
 
     let index = 0
     for (let i = bufferLength; i; v5 %= 0xFFF1) {
       let v8 = i
-      if (i >= 0x15B0) {
+      if (i >= 0x15B0)
         v8 = 0x15B0
-      }
 
       i -= v8
       if (v8 >= 16) {
@@ -150,9 +146,9 @@ export class LocalFile extends KartCrc {
   }
 
   async loadMeta () {
-    if (!existsSync(this.path)) {
+    if (!existsSync(this.path))
       return false
-    }
+
     const stat = statSync(this.path)
     this.size = stat.size
     this.mtimeMs = stat.mtimeMs

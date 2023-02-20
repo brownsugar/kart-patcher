@@ -156,9 +156,9 @@ export const useRegionStore = defineStore('region', {
       this[regionCode].refreshing = true
       const path = this[regionCode].client.path
       const { existsSync } = window.__KART_PATCHER__.node.fs
-      if (!path || !existsSync(path)) {
+      if (!path || !existsSync(path))
         return
-      }
+
       const { resolve } = window.__KART_PATCHER__.node.path
       const pinFile = regionPresets[regionCode].pinFile
       const installed = existsSync(resolve(path, pinFile))
@@ -175,20 +175,17 @@ export const useRegionStore = defineStore('region', {
           const patchServer = await window.__KART_PATCHER__.app.connectPatchSocket(host, port)
           this[regionCode].server.version = patchServer.version
           this[regionCode].server.patchUrl = patchServer.endpoint
-          if (patchServer.version === pin.clientVersion) {
+          if (patchServer.version === pin.clientVersion)
             this.updateStatus(regionCode, 100)
-          } else {
+          else
             this.updateStatus(regionCode, 200)
-          }
-        } else {
+        } else
           this.updateStatus(regionCode, 300)
-        }
       } catch (e: any) {
-        if (e.message === 'timeout') {
+        if (e.message === 'timeout')
           this.updateStatus(regionCode, 400)
-        } else {
+        else
           this.updateStatus(regionCode, 401)
-        }
         log.error('[Store][Region][checkStatus]', e)
       } finally {
         this[regionCode].refreshing = false

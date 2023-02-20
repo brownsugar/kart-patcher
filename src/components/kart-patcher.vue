@@ -127,25 +127,25 @@ const patchDone = computed(() => {
   return !busy.value && stepIndex.value === stepsProgress.value.length - 1
 })
 const overallProgress = computed(() => {
-  if (stepsProgress.value.length === 0) {
+  if (stepsProgress.value.length === 0)
     return 0
-  }
+
   const sum = stepsProgress.value.reduce((a, b) => a + b, 0)
   return Math.round(sum / stepsProgress.value.length)
 })
 const overallLabel = computed(() => {
-  if (stepIndex.value === -1) {
+  if (stepIndex.value === -1)
     return '就緒'
-  }
-  if (patchDone.value) {
+
+  if (patchDone.value)
     return '更新完成'
-  }
+
   return stepActive.value ? stepTitle[stepActive.value] : '更新進行中'
 })
 const stepProgress = computed(() => {
-  if (stepIndex.value === -1 || stepIndeterminate.value || patchDone.value) {
+  if (stepIndex.value === -1 || stepIndeterminate.value || patchDone.value)
     return 0
-  }
+
   const value = stepActive.value === 'download'
     ? fileProgress.value
     : stepsProgress.value[stepIndex.value]
@@ -155,12 +155,12 @@ const fileCounterLabel = computed(() => {
   return `[${fileIndex.value + 1} / ${filesTotal.value}]`
 })
 const fileStatusLabel = computed(() => {
-  if (!stepActive.value) {
+  if (!stepActive.value)
     return '等候操作'
-  }
-  if (patchDone.value) {
+
+  if (patchDone.value)
     return '更新完成 ✔️'
-  }
+
   return filesTotal.value
     ? fileName.value
     : '請稍候...'
@@ -191,11 +191,11 @@ on('step-start', (data) => {
   fileIndex.value = -1
   fileName.value = ''
 
-  if (data.indeterminate) {
+  if (data.indeterminate)
     stepIndeterminate.value = true
-  } else {
+  else
     stepIndeterminate.value = false
-  }
+
   filesTotal.value = data.count ?? 0
 })
 on('step-update', (data) => {
@@ -205,18 +205,17 @@ on('step-update', (data) => {
     stepsProgress.value[data.stepIndex] = (data.fileIndex + 1) / filesTotal.value * 100
   }
 
-  if (data.type === 'file-meta') {
+  if (data.type === 'file-meta')
     fileSize.value = data.meta.size
-  } else if (data.type === 'file-start') {
+  else if (data.type === 'file-start') {
     fileName.value = data.file
     fileProgress.value = 0
     fileSize.value = 0
     fileReceivedBytes.value = 0
   } else if (data.type === 'file-download') {
     fileProgress.value = data.progress?.percentage ?? 0
-    if (data.progress?.speed && !isNaN(data.progress?.speed)) {
+    if (data.progress?.speed && !isNaN(data.progress?.speed))
       fileSpeed.value = data.progress?.speed
-    }
     fileReceivedBytes.value = data.progress?.bytes ?? 0
   } else if (data.type === 'file-build') {
     // Too fast so do nothing
@@ -225,9 +224,8 @@ on('step-update', (data) => {
     increaseStepProgress()
   } else {
     fileName.value = data.file
-    if (filesTotal.value) {
+    if (filesTotal.value)
       increaseStepProgress()
-    }
   }
 })
 on('step-end', (data) => {
@@ -241,9 +239,8 @@ const patch = () => {
   const patchUrl = props.region?.server.patchUrl
   const version = props.region?.server.version
   const localPath = props.region?.client.path
-  if (patchUrl && version && localPath) {
+  if (patchUrl && version && localPath)
     init(patchUrl, version, localPath)
-  }
 }
 
 onBeforeUnmount(() => {

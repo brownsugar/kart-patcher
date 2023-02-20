@@ -39,9 +39,9 @@ function createWindow () {
   mainWindow.loadURL(process.env.APP_URL)
 
   enable(mainWindow.webContents)
-  if (process.env.DEBUGGING) {
+  if (process.env.DEBUGGING)
     mainWindow.webContents.openDevTools()
-  }
+
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url)
     return {
@@ -77,13 +77,11 @@ function createWindow () {
 app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
-  if (platform !== 'darwin') {
+  if (platform !== 'darwin')
     app.quit()
-  }
 })
 
 app.on('activate', () => {
-  if (mainWindow === undefined) {
+  if (mainWindow === undefined)
     createWindow()
-  }
 })

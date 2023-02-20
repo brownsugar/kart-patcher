@@ -57,9 +57,8 @@ export default class KartPin {
         data: {}
       }
       let key = ''
-      while ((key = reader.nextStringAuto()) !== '') {
+      while ((key = reader.nextStringAuto()) !== '')
         server.config.data[key] = reader.nextStringAuto()
-      }
     }
     reader.move(0x04)
 
@@ -104,12 +103,11 @@ export default class KartPin {
     dataReader.move(0x04)
 
     let data = dataReader.nextBuffer(dataLength - dataReader.tell())
-    if (flag & 2) {
+    if (flag & 2)
       data = this.decrypt(data, key)
-    }
-    if (flag & 1) {
+    if (flag & 1)
       data = inflateSync(data)
-    }
+
     return data
   }
 
@@ -119,9 +117,9 @@ export default class KartPin {
 
     uintArray1[0] = key ^ 0x8473FBC1
 
-    for (let i = 1; i < 16; ++i) {
+    for (let i = 1; i < 16; ++i)
       uintArray1[i] = uintArray1[i - 1] - 0x7B8C043F
-    }
+
     for (let i = 0; i <= 16; ++i) {
       const source = Buffer.alloc(4)
       source.writeUInt32LE(uintArray1[i])
@@ -138,9 +136,9 @@ export default class KartPin {
       }
       num += 64
     }
-    for (let i = num; i < buffer.length; ++i) {
+    for (let i = num; i < buffer.length; ++i)
       buffer[i] = buffer[i] ^ uintArray2[i - num]
-    }
+
     return buffer
   }
 }

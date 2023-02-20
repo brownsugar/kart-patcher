@@ -95,9 +95,8 @@ const router = useRouter()
 const region = computed(() => regions.value.find(r => r.code === route.params.code))
 
 onBeforeMount(() => {
-  if (!region.value) {
+  if (!region.value)
     router.replace('/')
-  }
 })
 </script>
 <script lang="ts">

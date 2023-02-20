@@ -133,9 +133,9 @@ const styleFn = (offset: number) => {
   return { height: offset ? `calc(100vh - ${offset}px + 16px)` : '100vh' }
 }
 const isItemActive = (to?: string) => {
-  if (!to) {
+  if (!to)
     return false
-  }
+
   return to === '/' ? route.path === to : route.path.startsWith(to ?? '')
 }
 const updateIndicatorStyle = async () => {

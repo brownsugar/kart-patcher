@@ -89,9 +89,8 @@ const api: IKartPatcherApi = {
       },
       on: (event, listener) => {
         const cbFn: Parameters<typeof ipcRenderer.on>[1] = (_event, data) => {
-          if (data.event === event) {
+          if (data.event === event)
             listener(data.payload)
-          }
         }
         ipcRenderer.on('patcher:event', cbFn)
       },

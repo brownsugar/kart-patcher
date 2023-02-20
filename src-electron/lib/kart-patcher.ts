@@ -72,7 +72,6 @@ export interface IKartPatcherEventCallback {
 const delay = (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms))
 
-// eslint-disable-next-line no-redeclare
 class KartPatcher extends EventEmitter {
   remoteUrl: string
   tempDir = 'Download'
@@ -175,14 +174,13 @@ class KartPatcher extends EventEmitter {
 
       const succeed = await localFile.loadMeta()
       if (succeed) {
-        if (localFile.crc === patchFile.crc) {
+        if (localFile.crc === patchFile.crc)
           continue
-        }
-        if (localFile.crc === patchFile.delta1TargetCrc) {
+
+        if (localFile.crc === patchFile.delta1TargetCrc)
           localFile.target = 'delta1'
-        } else if (localFile.crc === patchFile.delta2TargetCrc) {
+        else if (localFile.crc === patchFile.delta2TargetCrc)
           localFile.target = 'delta2'
-        }
       }
 
       this.patchFileIndexMap.set(patchFile.path, i)
@@ -360,9 +358,8 @@ class KartPatcher extends EventEmitter {
       })
 
       const patchIndex = this.patchFileIndexMap.get(file.filePath)
-      if (patchIndex === undefined) {
+      if (patchIndex === undefined)
         continue
-      }
 
       const patchFile = this.patchFiles[patchIndex]
       if (!existsSync(file.path)) {
@@ -370,9 +367,9 @@ class KartPatcher extends EventEmitter {
           cause: file.filePath
         })
       }
-      if (file.target !== 'full') {
+      if (file.target !== 'full')
         continue
-      }
+
       // Check file CRC
       if (file.crc !== patchFile.crc) {
         throw new Error('FILE_CRC_MISMATCH', {

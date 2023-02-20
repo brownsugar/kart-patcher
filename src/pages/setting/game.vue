@@ -42,9 +42,8 @@ const selectPath = async (regionCode: regionCodeT) => {
   const { normalize, resolve } = window.__KART_PATCHER__.node.path
   const { existsSync } = window.__KART_PATCHER__.node.fs
   const path = normalize(pathRaw)
-  if (!path || !existsSync(path)) {
+  if (!path || !existsSync(path))
     return
-  }
 
   const pinFile = regionPresets[regionCode].pinFile
   const installed = existsSync(resolve(path, pinFile))

@@ -11,21 +11,21 @@ export default class BufferManager extends BufferReader {
 
   nextShort (direct = false) {
     const length = this.nextUInt16LE()
-    if (direct) {
+    if (direct)
       return length // The length is the value
-    }
+
     const buffer = this.nextBuffer(length * 2)
     return buffer.readUInt16LE()
   }
 
   nextStringAuto (ascii = false) {
     const length = this.nextUInt32LE()
-    if (!length) {
+    if (!length)
       return ''
-    }
-    if (ascii) {
+
+    if (ascii)
       return this.nextBuffer(length).toString('ascii')
-    }
+
     return this.nextBuffer(length * 2).toString('utf16le')
   }
 }

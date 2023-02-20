@@ -36,21 +36,21 @@ const store = storeToRefs(useRegionStore())
 const region = computed(() => store[props.code].value)
 
 const color = computed(() => {
-  if (region.value.status === 100) {
+  if (region.value.status === 100)
     return 'positive'
-  }
-  if (region.value.status >= 200 && region.value.status < 300) {
+
+  if (region.value.status >= 200 && region.value.status < 300)
     return 'negative'
-  }
+
   return 'grey'
 })
 const icon = computed(() => {
-  if (region.value.status === 100) {
+  if (region.value.status === 100)
     return 'fa-solid fa-circle-check'
-  }
-  if (region.value.status >= 200 && region.value.status < 300) {
+
+  if (region.value.status >= 200 && region.value.status < 300)
     return 'fa-solid fa-exclamation-triangle'
-  }
+
   return null
 })
 </script>
