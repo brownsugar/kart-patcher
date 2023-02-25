@@ -31,7 +31,7 @@
     </div>
     <div class="col-grow q-ml-lg shadow-backdrop">
       <div class="bg-white relative-position full-height q-pa-md rounded-borders shadow-generic">
-        <div class="bg-info text-light flex items-center q-mb-sm q-pa-md half-rounded-borders">
+        <div class="bg-info text-light flex items-center q-mb-md q-pa-md half-rounded-borders">
           <q-icon
             name="fa-solid fa-circle-info"
             size="xs"

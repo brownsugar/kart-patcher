@@ -53,3 +53,8 @@ html[lang^='ko'] {
     box-shadow: var(--shadow);
   }
 }
+
+// Override
+.q-slider__text-container {
+  border-radius: 4px;
+}

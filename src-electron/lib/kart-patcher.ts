@@ -60,6 +60,9 @@ interface KartPatcher {
   emit (event: 'step-end', data: stepEndT): boolean
   emit (event: 'error', error: Error): boolean
 }
+interface IKartPatcherOptions {
+  deltaMode?: boolean
+}
 export interface IKartPatcherEventCallback {
   on (event: 'start', listener: (data: patcherStartT) => void): void
   on (event: 'end', listener: () => void): void
@@ -85,7 +88,8 @@ class KartPatcher extends EventEmitter {
   constructor (
     readonly patchUrl: string,
     readonly version: number,
-    readonly localPath: string
+    readonly localPath: string,
+    readonly options: IKartPatcherOptions & ConstructorParameters<typeof EasyDl>[2] = {}
   ) {
     super()
     this.remoteUrl = resolveUrl(patchUrl, version.toString())
@@ -177,10 +181,12 @@ class KartPatcher extends EventEmitter {
         if (localFile.crc === patchFile.crc)
           continue
 
-        if (localFile.crc === patchFile.delta1TargetCrc)
-          localFile.target = 'delta1'
-        else if (localFile.crc === patchFile.delta2TargetCrc)
-          localFile.target = 'delta2'
+        if (this.options.deltaMode) {
+          if (localFile.crc === patchFile.delta1TargetCrc)
+            localFile.target = 'delta1'
+          else if (localFile.crc === patchFile.delta2TargetCrc)
+            localFile.target = 'delta2'
+        }
       }
 
       this.patchFileIndexMap.set(patchFile.path, i)
@@ -224,7 +230,7 @@ class KartPatcher extends EventEmitter {
           resolveUrl(this.remoteUrl, file.getRawFilePath()),
           localPath,
           {
-            connections: 8,
+            connections: this.options.connections,
             maxRetry: 5
           }
         )

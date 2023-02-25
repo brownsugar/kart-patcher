@@ -43,7 +43,25 @@ interface IKartPatcherApi {
   }
 }
 
-const preferenceStore = new Store({
+interface IPreference {
+  game: {
+    tw: {
+      path: string
+    }
+    kr: {
+      path: string
+    }
+    cn: {
+      path: string
+    }
+  }
+  download: {
+    connections: number
+    deltaMode: boolean
+  }
+}
+
+const preferenceStore = new Store<IPreference>({
   schema: {
     game: {
       type: 'object',
@@ -56,6 +74,22 @@ const preferenceStore = new Store({
             }
           }
         }
+      },
+      additionalProperties: false
+    },
+    download: {
+      type: 'object',
+      properties: {
+        connections: {
+          type: 'number'
+        },
+        deltaMode: {
+          type: 'boolean'
+        }
+      },
+      default: {
+        connections: 8,
+        deltaMode: true
       },
       additionalProperties: false
     }
@@ -80,11 +114,14 @@ const api: IKartPatcherApi = {
     },
     patcher: {
       init: (...args) => {
+        const pref = preferenceStore.get('download')
         ipcRenderer
           .send('patcher:init', {
             patchUrl: args[0],
             version: args[1],
-            localPath: args[2]
+            localPath: args[2],
+            connections: pref.connections,
+            deltaMode: pref.deltaMode
           })
       },
       on: (event, listener) => {

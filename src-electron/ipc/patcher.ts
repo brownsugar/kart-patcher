@@ -6,7 +6,10 @@ export const patcherHandlers: IIpcConfig[] = [
     channel: 'patcher:init',
     response: false,
     listener: (_e, args) => {
-      const patcher = new KartPatcher(args?.patchUrl, args?.version, args?.localPath)
+      const patcher = new KartPatcher(args?.patchUrl, args?.version, args?.localPath, {
+        deltaMode: args?.deltaMode,
+        connections: args?.connections
+      })
 
       const events = [
         'start',

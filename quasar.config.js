@@ -23,7 +23,7 @@ module.exports = configure((/* ctx */) => {
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
       target: {
-        browser: ['es2019', 'chrome100'],
+        browser: ['chrome110'],
         node: 'node16'
       },
       vueRouterMode: 'hash',
