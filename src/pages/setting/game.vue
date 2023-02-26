@@ -38,11 +38,11 @@ const { updateClientPath, checkStatus } = regionStore
 const notify = useNotify()
 
 const selectPath = async (regionCode: regionCodeT) => {
-  const pathRaw = await window.__KART_PATCHER__.dialog.selectDirectory({
+  const pathRaw = await window.__KP_APP__.selectDirectory({
     title: '請選擇遊戲主程式安裝路徑'
   })
-  const { normalize, resolve } = window.__KART_PATCHER__.node.path
-  const { existsSync } = window.__KART_PATCHER__.node.fs
+  const { normalize, resolve } = window.__KP_UTILS__.path
+  const { existsSync } = window.__KP_UTILS__.fs
   const path = normalize(pathRaw)
   if (!path || !existsSync(path))
     return

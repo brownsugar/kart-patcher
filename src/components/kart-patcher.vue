@@ -174,7 +174,7 @@ const fileProgressLabel = computed(() => {
   return null
 })
 
-const { init, on, off } = window.__KART_PATCHER__.app.patcher
+const { init, on, off } = window.__KP_CORE__.patcher
 on('start', (data) => {
   stepIndex.value = -1
   busy.value = true

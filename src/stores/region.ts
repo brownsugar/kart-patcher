@@ -116,7 +116,7 @@ export const regionStatusLabel = {
   401: '找不到伺服器'
 }
 
-const preference = window.__KART_PATCHER__.store.preference
+const preference = window.__KP_STORE__.preference
 
 export const useRegionStore = defineStore('region', {
   state: () => {
@@ -155,16 +155,16 @@ export const useRegionStore = defineStore('region', {
     async checkStatus (regionCode: regionCodeT) {
       this[regionCode].refreshing = true
       const path = this[regionCode].client.path
-      const { existsSync } = window.__KART_PATCHER__.node.fs
+      const { existsSync } = window.__KP_UTILS__.fs
       if (!path || !existsSync(path))
         return
 
-      const { resolve } = window.__KART_PATCHER__.node.path
+      const { resolve } = window.__KP_UTILS__.path
       const pinFile = regionPresets[regionCode].pinFile
       const installed = existsSync(resolve(path, pinFile))
       try {
         if (installed) {
-          const pin = await window.__KART_PATCHER__.app.parsePin(path, pinFile)
+          const pin = await window.__KP_CORE__.parsePin(path, pinFile)
           this[regionCode].client.version = pin.clientVersion
 
           const host = pin.server.host
@@ -172,7 +172,7 @@ export const useRegionStore = defineStore('region', {
           this[regionCode].server.host = host
           this[regionCode].server.port = port
 
-          const patchServer = await window.__KART_PATCHER__.app.connectPatchSocket(host, port)
+          const patchServer = await window.__KP_CORE__.connectPatchSocket(host, port)
           this[regionCode].server.version = patchServer.version
           this[regionCode].server.patchUrl = patchServer.endpoint
           if (patchServer.version === pin.clientVersion)

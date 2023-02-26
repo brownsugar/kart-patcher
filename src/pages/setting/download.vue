@@ -43,7 +43,7 @@ import { defineComponent, ref } from 'vue'
 import { debounce } from 'quasar'
 import { useNotify } from 'src/composables/notify'
 
-const preference = window.__KART_PATCHER__.store.preference
+const preference = window.__KP_STORE__.preference
 const download = ref(preference.get('download'))
 const notify = useNotify()
 
