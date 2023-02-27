@@ -1,15 +1,15 @@
 import { defineStore } from 'pinia'
 import log from 'electron-log'
+import { i18n } from 'boot/i18n'
 import flagTw from 'assets/images/taiwan.png'
 import flagKr from 'assets/images/south-korea.png'
 import flagCn from 'assets/images/china.png'
 
 export type regionCodeT = 'tw' | 'kr' | 'cn'
-export type regionStatusT = keyof typeof regionStatusLabel
+export type regionStatusT = keyof typeof regionStatusPreset
 
 export interface IRegionPreset {
   flag: string
-  name: string
   pinFile: string
   defaultServer: {
     host: string
@@ -39,13 +39,12 @@ export interface IRegionState {
 export interface IRegion extends
   IRegionPreset, IRegionState {
   code: regionCodeT
+  name: string
 }
 
 export const regionPresets: Record<regionCodeT, IRegionPreset> = {
   tw: {
     flag: flagTw,
-    name: 'Taiwanese server',
-    // name: '台服',
     pinFile: 'KartRider.pin',
     defaultServer: {
       host: '210.208.95.160',
@@ -60,7 +59,6 @@ export const regionPresets: Record<regionCodeT, IRegionPreset> = {
   },
   kr: {
     flag: flagKr,
-    name: 'Korean server',
     pinFile: 'KartRider.pin',
     defaultServer: {
       host: '218.153.7.16',
@@ -75,7 +73,6 @@ export const regionPresets: Record<regionCodeT, IRegionPreset> = {
   },
   cn: {
     flag: flagCn,
-    name: 'Chinese server',
     pinFile: 'KartRider.pin',
     defaultServer: {
       host: '61.164.61.66',
@@ -106,14 +103,13 @@ const regionState = () => {
   }
   return state
 }
-// TODO: Move to i18n
-export const regionStatusLabel = {
-  0: '未知',
-  100: '最新版本',
-  200: '客戶端需更新',
-  300: '未安裝客戶端',
-  400: '伺服器維護中',
-  401: '找不到伺服器'
+const regionStatusPreset = {
+  0: 'UNKNOWN',
+  100: 'LATEST_VERSION',
+  200: 'CLIENT_OUTDATED',
+  300: 'CLIENT_NOT_FOUND',
+  400: 'SERVER_UNREACHABLE',
+  401: 'SERVER_NOT_FOUND'
 }
 
 const preference = window.__KP_STORE__.preference
@@ -134,6 +130,7 @@ export const useRegionStore = defineStore('region', {
           const _key = key as regionCodeT
           return {
             code: _key,
+            name: i18n.global.t(`region.${_key}`),
             ...state[_key],
             ...value
           }

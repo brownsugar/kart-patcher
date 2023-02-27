@@ -11,7 +11,7 @@
       color="secondary"
       text-color="accent"
       to="/"
-      label="回首頁"
+      :label="$t('action.backToHome')"
     />
   </div>
 </template>

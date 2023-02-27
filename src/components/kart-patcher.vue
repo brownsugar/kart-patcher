@@ -24,7 +24,7 @@
       <div class="flex justify-center full-width q-mt-lg">
         <q-btn
           color="primary"
-          label="開始更新"
+          :label="$t('patcher.updateNow')"
           unelevated
           rounded
           :loading="busy"
@@ -33,7 +33,7 @@
         <!-- <q-btn
           class="q-ml-md"
           color="primary"
-          label="修復安裝路徑"
+          :label="$t('patcher.fixRegistry')"
           unelevated
           rounded
         /> -->
@@ -89,6 +89,7 @@
 <script lang="ts" setup>
 import { PropType, ref, computed, onBeforeUnmount } from 'vue'
 import { format } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { useRegionStore } from 'stores/region'
 import type { IRegion } from 'stores/region'
 
@@ -101,18 +102,19 @@ const props = defineProps({
 
 const { humanStorageSize } = format
 const { checkStatus } = useRegionStore()
-const stepTitle = {
-  processPatchInfo: '獲取更新資訊中',
-  checkLocal: '檢查本機檔案中',
-  download: '下載檔案中',
-  extract: '解壓縮檔案中',
-  apply: '套用檔案中',
-  validate: '驗證檔案中'
-}
+const { t } = useI18n()
+
+type stepT =
+  | 'processPatchInfo'
+  | 'checkLocal'
+  | 'download'
+  | 'extract'
+  | 'apply'
+  | 'validate'
 
 const stepsProgress = ref<number[]>([])
 const stepIndex = ref(-1)
-const stepActive = ref<keyof typeof stepTitle | null>(null)
+const stepActive = ref<stepT | null>(null)
 const stepIndeterminate = ref(false)
 const filesTotal = ref(0)
 const fileIndex = ref(-1)
@@ -135,12 +137,12 @@ const overallProgress = computed(() => {
 })
 const overallLabel = computed(() => {
   if (stepIndex.value === -1)
-    return '就緒'
+    return t('patcher.ready')
 
   if (patchDone.value)
-    return '更新完成'
+    return t('patcher.done')
 
-  return stepActive.value ? stepTitle[stepActive.value] : '更新進行中'
+  return stepActive.value ? t(`patcher.step.${stepActive.value}`) : t('patcher.inProgress')
 })
 const stepProgress = computed(() => {
   if (stepIndex.value === -1 || stepIndeterminate.value || patchDone.value)
@@ -156,14 +158,14 @@ const fileCounterLabel = computed(() => {
 })
 const fileStatusLabel = computed(() => {
   if (!stepActive.value)
-    return '等候操作'
+    return t('patcher.waiting')
 
   if (patchDone.value)
-    return '更新完成 ✔️'
+    return t('patcher.done')
 
   return filesTotal.value
     ? fileName.value
-    : '請稍候...'
+    : t('patcher.busying')
 })
 const fileProgressLabel = computed(() => {
   if (stepActive.value === 'download') {

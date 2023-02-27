@@ -28,6 +28,7 @@
 <script lang="ts" setup>
 import { defineComponent } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { useRegionStore, regionPresets } from 'stores/region'
 import type { regionCodeT } from 'stores/region'
 import { useNotify } from 'src/composables/notify'
@@ -36,10 +37,11 @@ const regionStore = useRegionStore()
 const { regions } = storeToRefs(regionStore)
 const { updateClientPath, checkStatus } = regionStore
 const notify = useNotify()
+const { t } = useI18n()
 
 const selectPath = async (regionCode: regionCodeT) => {
   const pathRaw = await window.__KP_APP__.selectDirectory({
-    title: '請選擇遊戲主程式安裝路徑'
+    title: t('setting.game.content.selectDirectory')
   })
   const { normalize, resolve } = window.__KP_UTILS__.path
   const { existsSync } = window.__KP_UTILS__.fs
@@ -50,9 +52,9 @@ const selectPath = async (regionCode: regionCodeT) => {
   const pinFile = regionPresets[regionCode].pinFile
   const installed = existsSync(resolve(path, pinFile))
   if (installed)
-    notify.success('已選擇遊戲主程式安裝路徑')
+    notify.success(t('setting.game.content.pathSelected'))
   else
-    notify.warning('選擇的路徑不包含遊戲主程式，將執行全新安裝')
+    notify.warning(t('setting.game.content.emptyPathSelected'))
 
   updateClientPath(regionCode, path)
   checkStatus(regionCode)

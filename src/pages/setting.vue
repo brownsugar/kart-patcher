@@ -4,12 +4,12 @@
       <q-list class="text-generic">
         <q-item
           v-for="page in pages"
-          :key="page.name"
+          :key="page.key"
           v-ripple
           class="half-rounded-borders non-draggable"
           active-class="text-light bg-primary"
           :to="page.path"
-          :title="page.description"
+          :title="$t(`setting.${page.key}.description`)"
           exact
         >
           <q-item-section
@@ -23,7 +23,7 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>
-              {{ page.name }}
+              {{ $t(`setting.${page.key}.name`) }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -37,7 +37,7 @@
             size="xs"
           />
           <div class="q-ml-sm text-body-1">
-            {{ activePage?.description }}
+            {{ $t(`setting.${activePage?.key}.description`) }}
           </div>
         </div>
         <router-view />
@@ -52,26 +52,22 @@ import { RouteLocationNormalized, useRoute } from 'vue-router'
 
 export const settingPages = [
   {
-    name: '遊戲設定',
-    description: '選擇各伺服器遊戲主程式安裝路徑。',
+    key: 'game',
     icon: 'fa-solid fa-gamepad-modern',
     path: '/setting/game'
   },
   {
-    name: '語言設定',
-    description: '選擇更新器界面顯示語言。',
+    key: 'language',
     icon: 'fa-solid fa-language',
     path: '/setting/language'
   },
   {
-    name: '下載設定',
-    description: '選擇檔案下載偏好設定。',
+    key: 'download',
     icon: 'fa-solid fa-download',
     path: '/setting/download'
   },
   {
-    name: '關於',
-    description: '查看程式作者及版本資訊。',
+    key: 'about',
     icon: 'fa-solid fa-circle-info',
     path: '/setting/about'
   }
@@ -90,8 +86,7 @@ export default defineComponent({
 const pages = [
   ...settingPages,
   {
-    name: '返回',
-    description: '返回主頁面。',
+    key: 'back',
     icon: 'fa-solid fa-circle-arrow-left',
     path: fromRoute?.path ?? '/'
   }

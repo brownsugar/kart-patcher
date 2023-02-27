@@ -11,7 +11,7 @@
           <q-icon name="fa-solid fa-wrench" />
         </q-avatar>
         <q-toolbar-title class="text-bold">
-          Kart Patcher
+          {{ $t('app.name') }}
         </q-toolbar-title>
         <template v-for="(item, i) in headerMenuItems">
           <q-separator
@@ -81,32 +81,35 @@
 import {
   defineComponent,
   ref,
+  computed,
   watch,
   onMounted,
   nextTick
 } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import type { QToolbar } from 'quasar'
 
 const toolbar = ref<QToolbar>()
 const indicator = ref<HTMLDivElement>()
 const indicatorOffsetX = ref(-1)
 const route = useRoute()
+const { t } = useI18n()
 
-const headerMenuItems = [
+const headerMenuItems = computed(() => [
   {
     icon: 'fa-solid fa-home',
-    label: 'Home',
+    label: t('menu.home'),
     to: '/'
   },
   {
     icon: 'fa-solid fa-gear',
-    label: 'Settings',
+    label: t('menu.settings'),
     to: '/setting'
   },
   {
     icon: 'fa-solid fa-sparkles',
-    label: 'New version found!',
+    label: t('menu.updateAvailable'),
     href: 'https://github.com/brownsugar/kartrider-patcher/releases/latest',
     color: 'warning'
   },
@@ -115,19 +118,19 @@ const headerMenuItems = [
   },
   {
     icon: 'fa-solid fa-minus',
-    label: 'Minimize',
+    label: t('menu.minimize'),
     method: () => {
       window.__KP_APP__.minimize()
     }
   },
   {
     icon: 'fa-solid fa-xmark',
-    label: 'Close',
+    label: t('menu.exit'),
     method: () => {
       window.__KP_APP__.close()
     }
   }
-]
+])
 
 const styleFn = (offset: number) => {
   return { height: offset ? `calc(100vh - ${offset}px + 16px)` : '100vh' }

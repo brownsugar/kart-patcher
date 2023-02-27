@@ -24,7 +24,7 @@
         >
           <q-item>
             <q-item-section>
-              <q-item-label>本機版本</q-item-label>
+              <q-item-label>{{ $t('client.localVersion') }}</q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-item-label>
@@ -35,7 +35,7 @@
           <q-separator inset />
           <q-item>
             <q-item-section>
-              <q-item-label>線上版本</q-item-label>
+              <q-item-label>{{ $t('client.serverVersion') }}</q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-item-label
@@ -57,7 +57,7 @@
                 rounded
                 flat
               >
-                最新更新資訊
+                {{ $t('action.viewPatchNews') }}
                 <q-icon
                   class="q-ml-md"
                   name="fa-solid fa-arrow-up-right-from-square"

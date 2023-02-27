@@ -2,8 +2,8 @@
   <q-form>
     <div class="q-gutter-sm">
       <q-field
-        label="最大連線數"
-        hint="設置適當的連線數有助於提升下載速度。"
+        :label="$t('setting.download.content.connections.name')"
+        :hint="$t('setting.download.content.connections.description')"
         :model-value="download.connections"
       >
         <template #control>
@@ -23,8 +23,8 @@
         </template>
       </q-field>
       <q-field
-        label="智慧下載模式"
-        hint="僅下載必要的更新檔片段（跟隨遊戲本身機制），加快下載速度，若無法順利完成更新時請關閉此選項。"
+        :label="$t('setting.download.content.deltaMode.name')"
+        :hint="$t('setting.download.content.deltaMode.description')"
         :model-value="download.deltaMode"
       >
         <template #control>
@@ -41,11 +41,13 @@
 <script lang="ts" setup>
 import { defineComponent, ref } from 'vue'
 import { debounce } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { useNotify } from 'src/composables/notify'
 
 const preference = window.__KP_STORE__.preference
 const download = ref(preference.get('download'))
 const notify = useNotify()
+const { t } = useI18n()
 
 const connectionsSliderLabel = [1, 8, 16, 24, 32]
   .reduce((result, value) => {
@@ -55,7 +57,7 @@ const connectionsSliderLabel = [1, 8, 16, 24, 32]
 
 const updatePref = debounce((key: string, value: any) => {
   preference.set(`download.${key}`, value)
-  notify.success('設定已成功更新')
+  notify.success(t('setting.message.updateSuccess'))
 }, 700)
 </script>
 <script lang="ts">

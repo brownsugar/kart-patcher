@@ -20,6 +20,9 @@ interface IStorePreference {
       path: string
     }
   }
+  language: {
+    locale: string
+  }
   download: {
     connections: number
     deltaMode: boolean
@@ -38,6 +41,15 @@ export const preferenceStore = new Store<IStorePreference>({
               type: 'string'
             }
           }
+        }
+      },
+      additionalProperties: false
+    },
+    language: {
+      type: 'object',
+      properties: {
+        locale: {
+          type: 'string'
         }
       },
       additionalProperties: false

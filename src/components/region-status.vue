@@ -14,7 +14,7 @@
         class="q-mr-xs"
         color="white"
       />
-      <span>{{ regionStatusLabel[region.status] }}</span>
+      <span>{{ $t(`region.status.${region.status}`) }}</span>
     </template>
   </q-badge>
 </template>
@@ -22,7 +22,7 @@
 <script lang="ts" setup>
 import { PropType, computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useRegionStore, regionStatusLabel } from 'stores/region'
+import { useRegionStore } from 'stores/region'
 import type { regionCodeT } from 'stores/region'
 
 const props = defineProps({

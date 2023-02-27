@@ -27,7 +27,7 @@
             :to="`/region/${region.code}`"
             class="full-width non-draggable"
             color="generic"
-            label="查看詳情"
+            :label="$t('action.viewDetails')"
             icon-right="fa-solid fa-circle-arrow-right"
             padding="sm md"
             align="between"
