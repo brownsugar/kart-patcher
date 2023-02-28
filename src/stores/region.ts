@@ -6,7 +6,14 @@ import flagKr from 'assets/images/south-korea.png'
 import flagCn from 'assets/images/china.png'
 
 export type regionCodeT = 'tw' | 'kr' | 'cn'
-export type regionStatusT = keyof typeof regionStatusPreset
+export enum regionStatus {
+  'UNKNOWN' = 0,
+  'LATEST_VERSION' = 100,
+  'CLIENT_OUTDATED' = 200,
+  'CLIENT_NOT_FOUND' = 300,
+  'SERVER_UNREACHABLE' = 400,
+  'SERVER_NOT_FOUND' = 401,
+}
 
 export interface IRegionPreset {
   flag: string
@@ -23,7 +30,7 @@ export interface IRegionPreset {
   patchNewsUrl: string
 }
 export interface IRegionState {
-  status: regionStatusT
+  status: regionStatus
   refreshing: boolean
   client: {
     path: string | null
@@ -88,7 +95,7 @@ export const regionPresets: Record<regionCodeT, IRegionPreset> = {
 }
 const regionState = () => {
   const state: IRegionState = {
-    status: 0,
+    status: regionStatus.UNKNOWN,
     refreshing: false,
     client: {
       path: '',
@@ -102,14 +109,6 @@ const regionState = () => {
     }
   }
   return state
-}
-const regionStatusPreset = {
-  0: 'UNKNOWN',
-  100: 'LATEST_VERSION',
-  200: 'CLIENT_OUTDATED',
-  300: 'CLIENT_NOT_FOUND',
-  400: 'SERVER_UNREACHABLE',
-  401: 'SERVER_NOT_FOUND'
 }
 
 const preference = window.__KP_STORE__.preference
@@ -172,23 +171,33 @@ export const useRegionStore = defineStore('region', {
           const patchServer = await window.__KP_CORE__.connectPatchSocket(host, port)
           this[regionCode].server.version = patchServer.version
           this[regionCode].server.patchUrl = patchServer.endpoint
+
           if (patchServer.version === pin.clientVersion)
-            this.updateStatus(regionCode, 100)
+            this.updateStatus(regionCode, regionStatus.LATEST_VERSION)
           else
-            this.updateStatus(regionCode, 200)
-        } else
-          this.updateStatus(regionCode, 300)
+            this.updateStatus(regionCode, regionStatus.CLIENT_OUTDATED)
+        } else {
+          const { host, port } = regionPresets[regionCode].defaultServer
+          this[regionCode].server.host = host
+          this[regionCode].server.port = port
+
+          const patchServer = await window.__KP_CORE__.connectPatchSocket(host, port)
+          this[regionCode].server.version = patchServer.version
+          this[regionCode].server.patchUrl = patchServer.endpoint
+
+          this.updateStatus(regionCode, regionStatus.CLIENT_NOT_FOUND)
+        }
       } catch (e: any) {
         if (e.message === 'timeout')
-          this.updateStatus(regionCode, 400)
+          this.updateStatus(regionCode, regionStatus.SERVER_UNREACHABLE)
         else
-          this.updateStatus(regionCode, 401)
+          this.updateStatus(regionCode, regionStatus.SERVER_NOT_FOUND)
         log.error('[Store][Region][checkStatus]', e)
       } finally {
         this[regionCode].refreshing = false
       }
     },
-    updateStatus (regionCode: regionCodeT, statusCode: regionStatusT) {
+    updateStatus (regionCode: regionCodeT, statusCode: regionStatus) {
       this[regionCode].status = statusCode
     },
     updateClientPath (regionCode: regionCodeT, path: string) {

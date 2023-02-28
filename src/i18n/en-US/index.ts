@@ -7,6 +7,7 @@ export default {
     tw: 'Taiwanese Server',
     kr: 'Korean Server',
     cn: 'Chinese Server',
+    clickToRefresh: 'Click to refresh',
     status: {
       0: 'Unknown',
       100: 'Latest version',
@@ -83,6 +84,8 @@ export default {
   },
   patcher: {
     updateNow: 'Update now',
+    installNow: 'Install now',
+    repair: 'Repair installation',
     fixRegistry: 'Fix registry',
     ready: 'Ready',
     inProgress: 'Update in progress',

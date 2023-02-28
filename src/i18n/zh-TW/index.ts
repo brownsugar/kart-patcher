@@ -7,6 +7,7 @@ export default {
     tw: '台服',
     kr: '韓服',
     cn: '國服',
+    clickToRefresh: '點擊以刷新',
     status: {
       0: '未知',
       100: '最新版本',
@@ -83,6 +84,8 @@ export default {
   },
   patcher: {
     updateNow: '立即更新',
+    installNow: '立即安裝',
+    repair: '修復安裝',
     fixRegistry: '修復註冊表',
     ready: '就緒',
     inProgress: '更新進行中',

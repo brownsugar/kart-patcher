@@ -5,7 +5,7 @@
         :model-value="overallProgress"
         :min="0"
         :max="100"
-        :thickness="0.15"
+        :thickness="0.13"
         size="150px"
         color="primary"
         track-color="secondary"
@@ -24,12 +24,17 @@
       <div class="flex justify-center full-width q-mt-lg">
         <q-btn
           color="primary"
-          :label="$t('patcher.updateNow')"
+          :label="primaryActionLabel"
+          :loading="busy"
+          :disable="primaryActionDisabled"
           unelevated
           rounded
-          :loading="busy"
           @click="patch"
-        />
+        >
+          <template #loading>
+            <q-spinner-hourglass />
+          </template>
+        </q-btn>
         <!-- <q-btn
           class="q-ml-md"
           color="primary"
@@ -90,7 +95,7 @@
 import { PropType, ref, computed, onBeforeUnmount } from 'vue'
 import { format } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { useRegionStore } from 'stores/region'
+import { useRegionStore, regionStatus } from 'stores/region'
 import type { IRegion } from 'stores/region'
 
 const props = defineProps({
@@ -125,6 +130,19 @@ const fileSpeed = ref(0)
 const fileReceivedBytes = ref(0)
 const busy = ref(false)
 
+const primaryActionLabel = computed(() => {
+  if (props.region.status === regionStatus.LATEST_VERSION)
+    return t('patcher.repair')
+  if (props.region.status === regionStatus.CLIENT_NOT_FOUND)
+    return t('patcher.installNow')
+
+  return t('patcher.updateNow')
+})
+const primaryActionDisabled = computed(() => {
+  return props.region.refreshing ||
+    props.region.status === regionStatus.SERVER_NOT_FOUND ||
+    props.region.status === regionStatus.SERVER_UNREACHABLE
+})
 const patchDone = computed(() => {
   return !busy.value && stepIndex.value === stepsProgress.value.length - 1
 })
@@ -183,6 +201,7 @@ on('start', (data) => {
   stepsProgress.value = Array(data.count).fill(0)
 })
 on('end', async () => {
+  filesTotal.value = 0
   await checkStatus(props.region.code)
   busy.value = false
   stepIndeterminate.value = false
