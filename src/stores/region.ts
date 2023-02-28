@@ -152,8 +152,10 @@ export const useRegionStore = defineStore('region', {
       this[regionCode].refreshing = true
       const path = this[regionCode].client.path
       const { existsSync } = window.__KP_UTILS__.fs
-      if (!path || !existsSync(path))
+      if (!path || !existsSync(path)) {
+        this[regionCode].refreshing = false
         return
+      }
 
       const { resolve } = window.__KP_UTILS__.path
       const pinFile = regionPresets[regionCode].pinFile
