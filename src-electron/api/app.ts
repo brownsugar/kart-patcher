@@ -21,7 +21,7 @@ const api: IApiApp = {
     BrowserWindow.getFocusedWindow()?.close()
   },
   selectDirectory: options =>
-    ipcRenderer.invoke('dialog:selectDirectory', { options })
+    ipcRenderer.invoke('app:selectDirectory', { options })
 }
 
 export default {

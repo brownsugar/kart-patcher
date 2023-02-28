@@ -5,8 +5,7 @@ import { app, BrowserWindow, nativeTheme, shell, ipcMain } from 'electron'
 import { initialize, enable } from '@electron/remote/main'
 import Store from 'electron-store'
 import log from 'electron-log'
-import { dialogHandlers } from './ipc/dialog'
-import { patcherHandlers } from './ipc/patcher'
+import ipcHandlers from './ipc'
 
 const platform = process.platform || os.platform()
 
@@ -50,24 +49,18 @@ function createWindow () {
     }
   })
 
-  const handlers = [
-    dialogHandlers,
-    patcherHandlers
-  ]
-  handlers.forEach((handler) => {
-    handler.forEach(({ channel, response, listener }) => {
-      if (response !== false) {
-        ipcMain.handle(channel, (e, args = {}) => {
-          args.browserWindow = mainWindow
-          return listener(e, args)
-        })
-      } else {
-        ipcMain.on(channel, (e, args = {}) => {
-          args.browserWindow = mainWindow
-          return listener(e, args)
-        })
-      }
-    })
+  ipcHandlers.forEach(({ channel, response, listener }) => {
+    if (response !== false) {
+      ipcMain.handle(channel, (e, args = {}) => {
+        args.browserWindow = mainWindow
+        return listener(e, args)
+      })
+    } else {
+      ipcMain.on(channel, (e, args = {}) => {
+        args.browserWindow = mainWindow
+        return listener(e, args)
+      })
+    }
   })
 
   mainWindow.on('closed', () => {
