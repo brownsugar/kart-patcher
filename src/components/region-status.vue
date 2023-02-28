@@ -6,7 +6,7 @@
     }"
     :color="color"
     rounded
-    @click="check"
+    @click="action"
   >
     <q-spinner-ios
       v-if="region.refreshing"
@@ -25,14 +25,16 @@
       v-model="tooltipVisible"
       :offset="[0, 8]"
     >
-      {{ $t('region.clickToRefresh') }}
+      {{ tooltipLabel }}
     </q-tooltip>
   </q-badge>
 </template>
 
 <script lang="ts" setup>
 import { PropType, ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 import { useRegionStore, regionStatus } from 'stores/region'
 import type { regionCodeT } from 'stores/region'
 
@@ -46,6 +48,8 @@ const props = defineProps({
 const regionStore = useRegionStore()
 const store = storeToRefs(regionStore)
 const region = computed(() => store[props.code].value)
+const { t } = useI18n()
+const router = useRouter()
 
 const tooltipVisible = ref(false)
 
@@ -73,11 +77,20 @@ const icon = computed(() => {
 
   return null
 })
+const tooltipLabel = computed(() => {
+  if (region.value.status === regionStatus.CLIENT_PATH_NOT_SET)
+    return t('region.clickToSet')
+  else
+    return t('region.clickToRefresh')
+})
 
-const check = async () => {
+const action = async () => {
   if (region.value.refreshing)
     return
   tooltipVisible.value = false
-  await regionStore.checkStatus(props.code)
+  if (region.value.status === regionStatus.CLIENT_PATH_NOT_SET)
+    router.push('/setting/game')
+  else
+    await regionStore.checkStatus(props.code)
 }
 </script>

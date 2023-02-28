@@ -8,11 +8,13 @@ export default {
     kr: 'Korean Server',
     cn: 'Chinese Server',
     clickToRefresh: 'Click to refresh',
+    clickToSet: 'Click to set',
     status: {
       0: 'Unknown',
       100: 'Latest version',
       200: 'Client outdated',
       300: 'Client not installed',
+      301: 'Client path not set',
       400: 'Server under maintenance',
       401: 'Server not found'
     }

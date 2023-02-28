@@ -133,15 +133,15 @@ const busy = ref(false)
 const primaryActionLabel = computed(() => {
   if (props.region.status === regionStatus.LATEST_VERSION)
     return t('patcher.repair')
-  if (props.region.status === regionStatus.CLIENT_NOT_FOUND)
-    return t('patcher.installNow')
+  if (props.region.status === regionStatus.CLIENT_OUTDATED)
+    return t('patcher.updateNow')
 
-  return t('patcher.updateNow')
+  return t('patcher.installNow')
 })
 const primaryActionDisabled = computed(() => {
   return props.region.refreshing ||
-    props.region.status === regionStatus.SERVER_NOT_FOUND ||
-    props.region.status === regionStatus.SERVER_UNREACHABLE
+    props.region.status === regionStatus.UNKNOWN ||
+    props.region.status >= regionStatus.CLIENT_PATH_NOT_SET
 })
 const patchDone = computed(() => {
   return !busy.value && stepIndex.value === stepsProgress.value.length - 1

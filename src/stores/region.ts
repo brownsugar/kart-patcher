@@ -11,6 +11,7 @@ export enum regionStatus {
   'LATEST_VERSION' = 100,
   'CLIENT_OUTDATED' = 200,
   'CLIENT_NOT_FOUND' = 300,
+  'CLIENT_PATH_NOT_SET' = 301,
   'SERVER_UNREACHABLE' = 400,
   'SERVER_NOT_FOUND' = 401,
 }
@@ -142,17 +143,19 @@ export const useRegionStore = defineStore('region', {
       const regionCodes = Object.keys(this.$state) as regionCodeT[]
       regionCodes.forEach((code) => {
         const path = preference.get(`game.${code}.path`) as string
-        if (path) {
+        if (path)
           this[code].client.path = path
-          this.checkStatus(code)
-        }
+
+        this.checkStatus(code)
       })
     },
     async checkStatus (regionCode: regionCodeT) {
       this[regionCode].refreshing = true
+
       const path = this[regionCode].client.path
       const { existsSync } = window.__KP_UTILS__.fs
       if (!path || !existsSync(path)) {
+        this.updateStatus(regionCode, regionStatus.CLIENT_PATH_NOT_SET)
         this[regionCode].refreshing = false
         return
       }
