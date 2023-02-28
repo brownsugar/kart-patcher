@@ -68,7 +68,13 @@ export default {
     },
     about: {
       name: 'About',
-      description: 'View the author and version info.'
+      description: 'View the author and version info.',
+      content: {
+        version: 'App version',
+        developer: 'Developer',
+        repository: 'Source code',
+        license: 'License notice'
+      }
     },
     back: {
       name: 'Back',

@@ -8,12 +8,14 @@ declare global {
   }
 }
 interface IApiApp {
+  version: string
   minimize (): void
   close (): void
   selectDirectory (options?: OpenDialogOptions): Promise<any>
 }
 
 const api: IApiApp = {
+  version: process.env.npm_package_version ?? '',
   minimize: () => {
     BrowserWindow.getFocusedWindow()?.minimize()
   },

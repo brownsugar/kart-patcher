@@ -68,7 +68,13 @@ export default {
     },
     about: {
       name: '關於',
-      description: '查看程式作者及版本資訊。'
+      description: '查看程式作者及版本資訊。',
+      content: {
+        version: '程式版本',
+        developer: '開發人員',
+        repository: '專案原始碼',
+        license: '授權聲明'
+      }
     },
     back: {
       name: '返回',

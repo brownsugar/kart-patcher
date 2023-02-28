@@ -12,6 +12,9 @@ html[lang^='ko'] {
 :root {
   --shadow: 0 3px 20px #{rgba(#000, .05)};
 }
+a {
+  color: $primary;
+}
 .text-generic {
   color: $generic !important;
 }
