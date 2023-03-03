@@ -26,7 +26,7 @@
           color="primary"
           :label="primaryActionLabel"
           :loading="busy"
-          :disable="primaryActionDisabled"
+          :disable="primaryActionDisabled || fixRegistry.busy"
           unelevated
           rounded
           @click="patch"
@@ -35,13 +35,17 @@
             <q-spinner-hourglass />
           </template>
         </q-btn>
-        <!-- <q-btn
+        <q-btn
           class="q-ml-md"
           color="primary"
           :label="$t('patcher.fixRegistry')"
+          :loading="fixRegistry.busy"
+          :disable="busy"
           unelevated
+          outline
           rounded
-        /> -->
+          @click="ensureRegistrySetting(false)"
+        />
       </div>
     </div>
     <q-separator class="q-my-md" />
@@ -89,6 +93,36 @@
       </div>
     </div>
   </div>
+  <q-dialog v-model="fixRegistry.dialog">
+    <q-card>
+      <q-card-section>
+        <div class="text-body2 flex items-center no-wrap">
+          <q-avatar
+            icon="fa-solid fa-info"
+            color="primary"
+            text-color="white"
+            size="md"
+          />
+          <span class="q-ml-sm">{{ $t('patcher.registry.missing') }}</span>
+        </div>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn
+          v-close-popup
+          color="primary"
+          :label="$t('general.no')"
+          flat
+        />
+        <q-btn
+          color="primary"
+          :label="$t('general.yes')"
+          :loading="fixRegistry.busy"
+          unelevated
+          @click="writeRegistry"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -96,6 +130,7 @@ import { PropType, ref, computed, watch, onBeforeUnmount } from 'vue'
 import { format } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRegionStore, regionStatus } from 'stores/region'
+import { useNotify } from 'src/composables/notify'
 import type { IRegion } from 'stores/region'
 
 const props = defineProps({
@@ -108,6 +143,7 @@ const props = defineProps({
 const { humanStorageSize } = format
 const { checkStatus } = useRegionStore()
 const { t } = useI18n()
+const notify = useNotify()
 
 type stepT =
   | 'processPatchInfo'
@@ -129,6 +165,11 @@ const fileSize = ref(0)
 const fileSpeed = ref(0)
 const fileReceivedBytes = ref(0)
 const busy = ref(false)
+
+const fixRegistry = ref({
+  dialog: false,
+  busy: false
+})
 
 const primaryActionLabel = computed(() => {
   if (props.region.status === regionStatus.LATEST_VERSION)
@@ -211,6 +252,7 @@ on('end', async () => {
   busy.value = false
   stepIndeterminate.value = false
   window.__KP_APP__.setProgressBar(false)
+  ensureRegistrySetting(true)
 })
 on('step-start', (data) => {
   stepIndex.value = data.stepIndex
@@ -268,6 +310,47 @@ const patch = () => {
   const localPath = props.region?.client.path
   if (patchUrl && version && localPath)
     init(patchUrl, version, localPath)
+}
+const ensureRegistrySetting = async (ignorePassedNotify = false) => {
+  const { path, rootPathName, executableName } = props.region.registry
+  const registry = await window.__KP_APP__.readRegistry(path)
+  if (registry !== null) {
+    const passed = [rootPathName, executableName].every((name) => {
+      const reg = registry.find(item => item.name === name)
+      if (reg?.value)
+        return true
+
+      return false
+    })
+    if (passed) {
+      if (!ignorePassedNotify)
+        notify.success(t('patcher.registry.nothingToFix'))
+
+      return
+    }
+  }
+  fixRegistry.value.dialog = true
+}
+const writeRegistry = async () => {
+  if (!props.region?.client.path)
+    return
+
+  fixRegistry.value.busy = true
+  const { path, rootPathName, executableName } = props.region.registry
+  const { resolve } = window.__KP_UTILS__.path
+  const tasks = [
+    window.__KP_APP__.writeRegistry(path, rootPathName, props.region.client.path),
+    window.__KP_APP__.writeRegistry(path, executableName, resolve(props.region.client.path, props.region.exeFile))
+  ]
+
+  const result = await Promise.all(tasks)
+  fixRegistry.value.busy = false
+  fixRegistry.value.dialog = false
+
+  if (result.every(item => item))
+    notify.success(t('patcher.registry.fixSuccess'))
+  else
+    notify.warning(t('patcher.registry.fixFailed'))
 }
 
 onBeforeUnmount(() => {

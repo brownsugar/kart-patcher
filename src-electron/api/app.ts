@@ -13,6 +13,7 @@ interface IApiApp {
   minimize (): void
   close (): void
   readRegistry (path: string | string[]): Promise<RegistryItem[] | null>
+  writeRegistry (path: string, name: string, value: string): Promise<boolean>
   selectDirectory (options?: OpenDialogOptions): Promise<any>
   openDirectory (path: string): void
   setProgressBar (progress: boolean | number): void
@@ -31,6 +32,14 @@ const api: IApiApp = {
       return await ipcRenderer.invoke('app:readRegistry', { path })
     } catch (e) {
       return null
+    }
+  },
+  writeRegistry: async (path, name, value) => {
+    try {
+      await ipcRenderer.invoke('app:writeRegistry', { path, name, value })
+      return true
+    } catch (e) {
+      return false
     }
   },
   selectDirectory: options =>

@@ -29,67 +29,67 @@
         </template>
       </q-input>
     </div>
-    <q-dialog v-model="autofill.confirm">
-      <q-card>
-        <q-card-section>
-          <div class="text-body1 flex items-center">
-            <q-avatar
-              icon="fa-solid fa-info"
-              color="primary"
-              text-color="white"
-              size="md"
-            />
-            <span class="q-ml-sm">{{ $t('setting.game.content.pathDetected') }}</span>
-          </div>
-          <div class="text-body2 q-mt-sm">
-            <q-input
-              :model-value="autofill.path"
-              outlined
-              readonly
-              dense
-            >
-              <template #append>
-                <q-btn
-                  size="sm"
-                  round
-                  flat
-                  @click="openDirectory(autofill.path)"
-                >
-                  <q-icon
-                    name="fa-solid fa-folder-open"
-                    size="xs"
-                  />
-                  <q-tooltip
-                    anchor="center left"
-                    self="center right"
-                    :offset="[5, 0]"
-                  >
-                    {{ t('setting.game.content.openInExplorer') }}
-                  </q-tooltip>
-                </q-btn>
-              </template>
-            </q-input>
-          </div>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn
-            v-close-popup
-            color="primary"
-            :label="$t('general.no')"
-            flat
-            @click="selectPath(autofill.regionCode)"
-          />
-          <q-btn
-            v-close-popup
-            color="primary"
-            :label="$t('general.yes')"
-            unelevated
-            @click="confirmPath(autofill.regionCode, autofill.path)"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </q-form>
+  <q-dialog v-model="autofill.dialog">
+    <q-card>
+      <q-card-section>
+        <div class="text-body2 flex items-center no-wrap">
+          <q-avatar
+            icon="fa-solid fa-info"
+            color="primary"
+            text-color="white"
+            size="md"
+          />
+          <span class="q-ml-sm">{{ $t('setting.game.content.pathDetected') }}</span>
+        </div>
+        <div class="q-mt-md">
+          <q-input
+            :model-value="autofill.path"
+            outlined
+            readonly
+            dense
+          >
+            <template #append>
+              <q-btn
+                size="sm"
+                round
+                flat
+                @click="openDirectory(autofill.path)"
+              >
+                <q-icon
+                  name="fa-solid fa-folder-open"
+                  size="xs"
+                />
+                <q-tooltip
+                  anchor="center left"
+                  self="center right"
+                  :offset="[5, 0]"
+                >
+                  {{ t('setting.game.content.openInExplorer') }}
+                </q-tooltip>
+              </q-btn>
+            </template>
+          </q-input>
+        </div>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn
+          v-close-popup
+          color="primary"
+          :label="$t('general.no')"
+          flat
+          @click="selectPath(autofill.regionCode)"
+        />
+        <q-btn
+          v-close-popup
+          color="primary"
+          :label="$t('general.yes')"
+          unelevated
+          @click="confirmPath(autofill.regionCode, autofill.path)"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -107,7 +107,7 @@ const notify = useNotify()
 const { t } = useI18n()
 
 const autofill = ref({
-  confirm: false,
+  dialog: false,
   path: '',
   regionCode: '' as regionCodeT
 })
@@ -118,14 +118,14 @@ const { existsSync } = window.__KP_UTILS__.fs
 const clientPathHandler = async (regionCode: regionCodeT) => {
   const region = regions.value.find(r => r.code === regionCode)
   if (!region?.client.path) {
-    const { path, rootPathKey } = regionPresets[regionCode].registry
+    const { path, rootPathName } = regionPresets[regionCode].registry
     const registry = await window.__KP_APP__.readRegistry(path)
     if (registry !== null) {
-      const rootPath = registry.find(item => item.name === rootPathKey)
+      const rootPath = registry.find(item => item.name === rootPathName)
       if (rootPath) {
         autofill.value.path = rootPath.value
         autofill.value.regionCode = regionCode
-        autofill.value.confirm = true
+        autofill.value.dialog = true
         return
       }
     }

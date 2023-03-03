@@ -101,6 +101,12 @@ export default {
     done: 'Update completed',
     waiting: 'Waiting for user action',
     busying: 'Please wait...',
+    registry: {
+      missing: 'Missed registry settings detected, game starting might be affected, do you want to fix it now?',
+      fixSuccess: 'Successfully fixed registry settings.',
+      fixFailed: 'Failed to fix registry settings.',
+      nothingToFix: 'Registry settings look good, nothing to fix.'
+    },
     step: {
       processPatchInfo: 'Processing patch info',
       checkLocal: 'Checking local files',

@@ -13,23 +13,39 @@ export interface IIpcConfig {
   response?: boolean
 }
 
+const initRegistry = (path: string) => {
+  const [hive, ...key] = path.split('\\')
+  return new Registry({
+    hive,
+    key: `\\${key.join('\\')}`
+  })
+}
+
 const handlers: IIpcConfig[] = [
   {
     channel: 'app:readRegistry',
     listener: (_e, args) => {
-      const path = args?.path as string
-      const [hive, ...key] = path.split('\\')
-      const regs = new Registry({
-        hive,
-        key: `\\${key.join('\\')}`
-      })
+      const reg = initRegistry(args?.path)
       return new Promise((resolve, reject) => {
-        regs.values((error, items) => {
+        reg.values((error, items) => {
           if (error)
             reject(error)
           else
             resolve(items)
         })
+      })
+    }
+  },
+  {
+    channel: 'app:writeRegistry',
+    listener: (_e, args) => {
+      const reg = initRegistry(args?.path)
+      return new Promise<void>((resolve, reject) => {
+        reg.set(args?.name, Registry.REG_SZ, args?.value, (error) => {
+          if (error)
+            reject(error)
+        })
+        resolve()
       })
     }
   },

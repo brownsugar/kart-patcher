@@ -101,6 +101,12 @@ export default {
     done: '更新完成',
     waiting: '等候操作',
     busying: '請稍候...',
+    registry: {
+      missing: '偵測到註冊表設定缺失，可能影響到遊戲啓動，是否要立即修復設定？',
+      fixSuccess: '註冊表修復成功。',
+      fixFailed: '註冊表修復失敗。',
+      nothingToFix: '註冊表設定正常，無需修復。'
+    },
     step: {
       processPatchInfo: '獲取更新資訊中',
       checkLocal: '檢查本機檔案中',

@@ -19,14 +19,15 @@ export enum regionStatus {
 export interface IRegionPreset {
   flag: string
   pinFile: string
+  exeFile: string
   defaultServer: {
     host: string
     port: number
   }
   registry: {
     path: string
-    rootPathKey: string
-    executableKey: string
+    rootPathName: string
+    executableName: string
   }
   patchNewsUrl: string
 }
@@ -54,42 +55,45 @@ export const regionPresets: Record<regionCodeT, IRegionPreset> = {
   tw: {
     flag: flagTw,
     pinFile: 'KartRider.pin',
+    exeFile: 'KartRider.exe',
     defaultServer: {
       host: '210.208.95.160',
       port: 39311
     },
     registry: {
       path: 'HKLM\\SOFTWARE\\WOW6432Node\\Gamania\\PopKart\\M01',
-      rootPathKey: 'InstallPath',
-      executableKey: 'Executable'
+      rootPathName: 'InstallPath',
+      executableName: 'Executable'
     },
     patchNewsUrl: 'https://kinf.cc/BUeHl'
   },
   kr: {
     flag: flagKr,
     pinFile: 'KartRider.pin',
+    exeFile: 'KartRider.exe',
     defaultServer: {
       host: '218.153.7.16',
       port: 39311
     },
     registry: {
       path: 'HKLM\\SOFTWARE\\WOW6432Node\\Nexon\\KartRider\\M01',
-      rootPathKey: 'RootPath',
-      executableKey: 'Executable'
+      rootPathName: 'RootPath',
+      executableName: 'Executable'
     },
     patchNewsUrl: 'https://kinf.cc/SpndE'
   },
   cn: {
     flag: flagCn,
     pinFile: 'KartRider.pin',
+    exeFile: 'KartRider.exe',
     defaultServer: {
       host: '61.164.61.66',
       port: 39311
     },
     registry: {
       path: 'HKLM\\SOFTWARE\\WOW6432Node\\TianCity\\PopKart\\M01',
-      rootPathKey: 'InstallPath',
-      executableKey: 'Executable'
+      rootPathName: 'InstallPath',
+      executableName: 'Executable'
     },
     patchNewsUrl: 'https://kinf.cc/t3bMn'
   }
