@@ -23,7 +23,7 @@ try {
 let mainWindow: BrowserWindow | undefined
 const createWindow = () => {
   mainWindow = new BrowserWindow({
-    icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
+    icon: path.resolve(__dirname, 'icons/icon.png'),
     width: 800,
     height: 450,
     useContentSize: true,

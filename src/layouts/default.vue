@@ -7,8 +7,11 @@
         ref="toolbar"
         class="bg-primary q-electron-drag q-px-lg"
       >
-        <q-avatar>
-          <q-icon name="fa-solid fa-wrench" />
+        <q-avatar color="light">
+          <img
+            src="icons/favicon.png"
+            :alt="$t('app.name')"
+          >
         </q-avatar>
         <q-toolbar-title class="text-bold">
           {{ $t('app.name') }}
