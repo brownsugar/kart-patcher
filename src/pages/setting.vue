@@ -49,29 +49,8 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue'
 import { RouteLocationNormalized, useRoute } from 'vue-router'
+import { settingPages } from 'src/router/routes'
 
-export const settingPages = [
-  {
-    key: 'game',
-    icon: 'fa-solid fa-gamepad',
-    path: '/setting/game'
-  },
-  {
-    key: 'language',
-    icon: 'fa-solid fa-language',
-    path: '/setting/language'
-  },
-  {
-    key: 'download',
-    icon: 'fa-solid fa-download',
-    path: '/setting/download'
-  },
-  {
-    key: 'about',
-    icon: 'fa-solid fa-circle-info',
-    path: '/setting/about'
-  }
-]
 let fromRoute: RouteLocationNormalized
 
 export default defineComponent({

@@ -1,5 +1,27 @@
 import { RouteRecordRaw } from 'vue-router'
-import { settingPages } from 'pages/setting.vue'
+
+export const settingPages = [
+  {
+    key: 'game',
+    icon: 'fa-solid fa-gamepad',
+    path: '/setting/game'
+  },
+  {
+    key: 'language',
+    icon: 'fa-solid fa-language',
+    path: '/setting/language'
+  },
+  {
+    key: 'download',
+    icon: 'fa-solid fa-download',
+    path: '/setting/download'
+  },
+  {
+    key: 'about',
+    icon: 'fa-solid fa-circle-info',
+    path: '/setting/about'
+  }
+]
 
 const settingChildComponents = import.meta.glob('pages/setting/*.vue')
 const routes: RouteRecordRaw[] = [
