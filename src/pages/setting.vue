@@ -53,7 +53,7 @@ import { RouteLocationNormalized, useRoute } from 'vue-router'
 export const settingPages = [
   {
     key: 'game',
-    icon: 'fa-solid fa-gamepad-modern',
+    icon: 'fa-solid fa-gamepad',
     path: '/setting/game'
   },
   {

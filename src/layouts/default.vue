@@ -111,7 +111,7 @@ const headerMenuItems = computed(() => [
     to: '/setting'
   },
   {
-    icon: 'fa-solid fa-sparkles',
+    icon: 'fa-solid fa-rocket',
     label: t('menu.updateAvailable'),
     href: 'https://github.com/brownsugar/kartrider-patcher/releases/latest',
     color: 'warning'

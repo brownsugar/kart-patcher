@@ -18,7 +18,7 @@ module.exports = configure((/* ctx */) => {
     ],
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
-      // 'fontawesome-v6'
+      'fontawesome-v6'
     ],
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
@@ -49,7 +49,7 @@ module.exports = configure((/* ctx */) => {
           early: true
         }
       },
-      iconSet: 'fontawesome-v6-pro',
+      iconSet: 'fontawesome-v6',
       plugins: [
         'Notify'
       ]
