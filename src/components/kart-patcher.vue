@@ -26,7 +26,7 @@
           color="primary"
           :label="primaryActionLabel"
           :loading="busy"
-          :disable="primaryActionDisabled || fixRegistry.busy"
+          :disable="primaryActionDisabled"
           unelevated
           rounded
           @click="patch"
@@ -40,7 +40,7 @@
           color="primary"
           :label="$t('patcher.fixRegistry')"
           :loading="fixRegistry.busy"
-          :disable="busy"
+          :disable="fixRegistryDisabled"
           unelevated
           outline
           rounded
@@ -182,7 +182,12 @@ const primaryActionLabel = computed(() => {
 const primaryActionDisabled = computed(() => {
   return props.region.refreshing ||
     props.region.status === regionStatus.UNKNOWN ||
-    props.region.status >= regionStatus.CLIENT_PATH_NOT_SET
+    props.region.status >= regionStatus.CLIENT_PATH_NOT_SET ||
+    fixRegistry.value.busy
+})
+const fixRegistryDisabled = computed(() => {
+  return props.region.status === regionStatus.CLIENT_PATH_NOT_SET ||
+    busy.value
 })
 const patchDone = computed(() => {
   return !busy.value && stepIndex.value === stepsProgress.value.length - 1
@@ -311,13 +316,27 @@ const patch = () => {
   if (patchUrl && version && localPath)
     init(patchUrl, version, localPath)
 }
+
+const getRegistrySettingValue = () => {
+  if (!props.region?.client.path)
+    return null
+
+  const { rootPathName, executableName } = props.region.registry
+  const { resolve } = window.__KP_UTILS__.path
+
+  return {
+    [rootPathName]: props.region.client.path,
+    [executableName]: resolve(props.region.client.path, props.region.exeFile)
+  }
+}
 const ensureRegistrySetting = async (ignorePassedNotify = false) => {
   const { path, rootPathName, executableName } = props.region.registry
   const registry = await window.__KP_APP__.readRegistry(path)
-  if (registry !== null) {
+  const value = getRegistrySettingValue()
+  if (registry !== null && value !== null) {
     const passed = [rootPathName, executableName].every((name) => {
       const reg = registry.find(item => item.name === name)
-      if (reg?.value)
+      if (reg?.value === value[name])
         return true
 
       return false
@@ -332,18 +351,18 @@ const ensureRegistrySetting = async (ignorePassedNotify = false) => {
   fixRegistry.value.dialog = true
 }
 const writeRegistry = async () => {
-  if (!props.region?.client.path)
-    return
-
   fixRegistry.value.busy = true
   const { path, rootPathName, executableName } = props.region.registry
-  const { resolve } = window.__KP_UTILS__.path
-  const tasks = [
-    window.__KP_APP__.writeRegistry(path, rootPathName, props.region.client.path),
-    window.__KP_APP__.writeRegistry(path, executableName, resolve(props.region.client.path, props.region.exeFile))
-  ]
+  const value = getRegistrySettingValue()
+  if (value === null)
+    return
 
+  const tasks = [
+    window.__KP_APP__.writeRegistry(path, rootPathName, value[rootPathName]),
+    window.__KP_APP__.writeRegistry(path, executableName, value[executableName])
+  ]
   const result = await Promise.all(tasks)
+
   fixRegistry.value.busy = false
   fixRegistry.value.dialog = false
 
