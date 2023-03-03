@@ -92,7 +92,7 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, ref, computed, onBeforeUnmount } from 'vue'
+import { PropType, ref, computed, watch, onBeforeUnmount } from 'vue'
 import { format } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRegionStore, regionStatus } from 'stores/region'
@@ -194,17 +194,23 @@ const fileProgressLabel = computed(() => {
   return null
 })
 
+watch(overallProgress, (value) => {
+  window.__KP_APP__.setProgressBar(value / 100)
+})
+
 const { init, on, off } = window.__KP_CORE__.patcher
 on('start', (data) => {
   stepIndex.value = -1
   busy.value = true
   stepsProgress.value = Array(data.count).fill(0)
+  window.__KP_APP__.setProgressBar(true)
 })
 on('end', async () => {
   filesTotal.value = 0
   await checkStatus(props.region.code)
   busy.value = false
   stepIndeterminate.value = false
+  window.__KP_APP__.setProgressBar(false)
 })
 on('step-start', (data) => {
   stepIndex.value = data.stepIndex

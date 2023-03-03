@@ -15,6 +15,7 @@ interface IApiApp {
   readRegistry (path: string | string[]): Promise<RegistryItem[] | null>
   selectDirectory (options?: OpenDialogOptions): Promise<any>
   openDirectory (path: string): void
+  setProgressBar (progress: boolean | number): void
 }
 
 const api: IApiApp = {
@@ -35,7 +36,13 @@ const api: IApiApp = {
   selectDirectory: options =>
     ipcRenderer.invoke('app:selectDirectory', { options }),
   openDirectory: path =>
-    ipcRenderer.send('app:openDirectory', { path })
+    ipcRenderer.send('app:openDirectory', { path }),
+  setProgressBar: (progress) => {
+    const value = typeof progress === 'number'
+      ? progress
+      : (progress === true ? 2 : -1)
+    ipcRenderer.send('app:setProgressBar', { progress: value })
+  }
 }
 
 export default {

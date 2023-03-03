@@ -57,6 +57,16 @@ const handlers: IIpcConfig[] = [
     }
   },
   {
+    channel: 'app:setProgressBar',
+    response: false,
+    listener: (_e, args) => {
+      if (!args?.browserWindow)
+        return
+
+      args.browserWindow.setProgressBar(args?.progress ?? 2) // default to indeterminate state
+    }
+  },
+  {
     channel: 'patcher:init',
     response: false,
     listener: (_e, args) => {
