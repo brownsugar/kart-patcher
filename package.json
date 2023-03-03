@@ -14,6 +14,7 @@
   "dependencies": {
     "@electron/remote": "^2.0.9",
     "@quasar/extras": "^1.15.11",
+    "@types/winreg": "^1.2.31",
     "buffer-reader": "^0.1.0",
     "easydl": "^1.0.3",
     "electron-log": "^5.0.0-beta.16",
@@ -25,7 +26,8 @@
     "utimes": "^5.1.1",
     "vue": "^3.2.47",
     "vue-i18n": "^9.2.2",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "winreg": "^1.2.4"
   },
   "devDependencies": {
     "@brownsugar/eslint-config-vue": "^1.0.7",

@@ -59,7 +59,7 @@ export const regionPresets: Record<regionCodeT, IRegionPreset> = {
       port: 39311
     },
     registry: {
-      path: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Gamania\\PopKart\\M01',
+      path: 'HKLM\\SOFTWARE\\WOW6432Node\\Gamania\\PopKart\\M01',
       rootPathKey: 'InstallPath',
       executableKey: 'Executable'
     },
@@ -73,7 +73,7 @@ export const regionPresets: Record<regionCodeT, IRegionPreset> = {
       port: 39311
     },
     registry: {
-      path: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Nexon\\KartRider\\M01',
+      path: 'HKLM\\SOFTWARE\\WOW6432Node\\Nexon\\KartRider\\M01',
       rootPathKey: 'RootPath',
       executableKey: 'Executable'
     },
@@ -87,7 +87,7 @@ export const regionPresets: Record<regionCodeT, IRegionPreset> = {
       port: 39311
     },
     registry: {
-      path: 'HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\TianCity\\PopKart\\M01',
+      path: 'HKLM\\SOFTWARE\\WOW6432Node\\TianCity\\PopKart\\M01',
       rootPathKey: 'InstallPath',
       executableKey: 'Executable'
     },

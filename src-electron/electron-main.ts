@@ -21,8 +21,7 @@ try {
 } catch (_) {}
 
 let mainWindow: BrowserWindow | undefined
-
-function createWindow () {
+const createWindow = () => {
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, 'icons/icon.png'), // tray icon
     width: 800,

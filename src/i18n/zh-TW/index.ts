@@ -3,6 +3,10 @@ export default {
   app: {
     name: 'Kart Patcher'
   },
+  general: {
+    yes: '是',
+    no: '否'
+  },
   region: {
     tw: '台服',
     kr: '韓服',
@@ -43,7 +47,10 @@ export default {
       name: '遊戲設定',
       description: '選擇各伺服器遊戲主程式安裝路徑。',
       content: {
-        selectDirectory: '請選擇遊戲主程式安裝路徑',
+        browse: '瀏覽...',
+        selectDirectory: '請選擇遊戲主程式安裝路徑...',
+        pathDetected: '已自動偵測到您的遊戲安裝路徑，是否要使用此路徑？',
+        openInExplorer: '在檔案總管中開啟',
         pathSelected: '已選擇遊戲主程式安裝路徑。',
         emptyPathSelected: '選擇的路徑不包含遊戲主程式，將執行完整安裝。'
       }

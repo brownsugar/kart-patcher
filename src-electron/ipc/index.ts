@@ -1,4 +1,5 @@
-import { dialog } from 'electron'
+import { dialog, shell } from 'electron'
+import Registry from 'winreg'
 import type { BrowserWindow, IpcMainInvokeEvent } from 'electron'
 import KartPatcher from '../lib/kart-patcher'
 
@@ -6,7 +7,6 @@ export interface IListenerArg {
   browserWindow?: BrowserWindow
   [key: string]: any
 }
-
 export interface IIpcConfig {
   channel: string
   listener: (event: IpcMainInvokeEvent, args?: IListenerArg) => any
@@ -14,6 +14,25 @@ export interface IIpcConfig {
 }
 
 const handlers: IIpcConfig[] = [
+  {
+    channel: 'app:readRegistry',
+    listener: (_e, args) => {
+      const path = args?.path as string
+      const [hive, ...key] = path.split('\\')
+      const regs = new Registry({
+        hive,
+        key: `\\${key.join('\\')}`
+      })
+      return new Promise((resolve, reject) => {
+        regs.values((error, items) => {
+          if (error)
+            reject(error)
+          else
+            resolve(items)
+        })
+      })
+    }
+  },
   {
     channel: 'app:selectDirectory',
     listener: async (_e, args) => {
@@ -25,6 +44,16 @@ const handlers: IIpcConfig[] = [
         ...args?.options
       })
       return filePaths[0]
+    }
+  },
+  {
+    channel: 'app:openDirectory',
+    response: false,
+    listener: async (_e, args) => {
+      if (!args?.path)
+        return
+
+      await shell.openPath(args.path)
     }
   },
   {

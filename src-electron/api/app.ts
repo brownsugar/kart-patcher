@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron'
 import { BrowserWindow } from '@electron/remote'
 import type { OpenDialogOptions } from 'electron'
+import type { RegistryItem } from 'winreg'
 
 declare global {
   interface Window {
@@ -11,7 +12,9 @@ interface IApiApp {
   version: string
   minimize (): void
   close (): void
+  readRegistry (path: string | string[]): Promise<RegistryItem[] | null>
   selectDirectory (options?: OpenDialogOptions): Promise<any>
+  openDirectory (path: string): void
 }
 
 const api: IApiApp = {
@@ -22,8 +25,17 @@ const api: IApiApp = {
   close: () => {
     BrowserWindow.getFocusedWindow()?.close()
   },
+  readRegistry: async (path) => {
+    try {
+      return await ipcRenderer.invoke('app:readRegistry', { path })
+    } catch (e) {
+      return null
+    }
+  },
   selectDirectory: options =>
-    ipcRenderer.invoke('app:selectDirectory', { options })
+    ipcRenderer.invoke('app:selectDirectory', { options }),
+  openDirectory: path =>
+    ipcRenderer.send('app:openDirectory', { path })
 }
 
 export default {

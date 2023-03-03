@@ -3,6 +3,10 @@ export default {
   app: {
     name: 'Kart Patcher'
   },
+  general: {
+    yes: 'Yes',
+    no: 'No'
+  },
   region: {
     tw: 'Taiwanese Server',
     kr: 'Korean Server',
@@ -43,7 +47,10 @@ export default {
       name: 'Game Settings',
       description: 'Select the game client path of each region.',
       content: {
-        selectDirectory: 'Please select the client install path',
+        browse: 'Browse...',
+        selectDirectory: 'Please select the client installed path...',
+        pathDetected: 'Client installed path detected, confirm to use this path?',
+        openInExplorer: 'Open in Explorer',
         pathSelected: 'Client path successfully selected.',
         emptyPathSelected: 'The selected path does not contain the client, a full installation will be performed.'
       }
