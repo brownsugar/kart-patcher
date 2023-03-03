@@ -136,8 +136,10 @@ const openDirectory = (path: string) => {
   window.__KP_APP__.openDirectory(path)
 }
 const selectPath = async (regionCode: regionCodeT) => {
+  const region = regions.value.find(r => r.code === regionCode)
   const pathRaw = await window.__KP_APP__.selectDirectory({
-    title: t('setting.game.content.selectDirectory')
+    title: t('setting.game.content.selectDirectory'),
+    defaultPath: region?.client.path ?? undefined
   })
   if (!pathRaw)
     return
