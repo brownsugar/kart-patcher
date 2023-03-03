@@ -74,12 +74,12 @@
           track-color="secondary"
           size="18px"
           :value="stepProgress / 100"
-          :indeterminate="stepIndeterminate"
+          :indeterminate="step.indeterminate"
           instant-feedback
           rounded
         >
           <div
-            v-if="busy && !stepIndeterminate"
+            v-if="busy && !step.indeterminate"
             class="absolute-full flex flex-center"
           >
             <div
@@ -154,16 +154,24 @@ type stepT =
   | 'validate'
 
 const stepsProgress = ref<number[]>([])
-const stepIndex = ref(-1)
-const stepActive = ref<stepT | null>(null)
-const stepIndeterminate = ref(false)
+const step = ref<{
+  index: number
+  active: stepT | null
+  indeterminate: boolean
+}>({
+  index: -1,
+  active: null,
+  indeterminate: false
+})
 const filesTotal = ref(0)
-const fileIndex = ref(-1)
-const fileName = ref('')
-const fileProgress = ref(0)
-const fileSize = ref(0)
-const fileSpeed = ref(0)
-const fileReceivedBytes = ref(0)
+const file = ref({
+  index: -1,
+  name: '',
+  progress: 0,
+  size: 0,
+  speed: 0,
+  receivedBytes: 0
+})
 const busy = ref(false)
 
 const fixRegistry = ref({
@@ -190,7 +198,7 @@ const fixRegistryDisabled = computed(() => {
     busy.value
 })
 const patchDone = computed(() => {
-  return !busy.value && stepIndex.value === stepsProgress.value.length - 1
+  return !busy.value && step.value.index === stepsProgress.value.length - 1
 })
 const overallProgress = computed(() => {
   if (stepsProgress.value.length === 0)
@@ -200,41 +208,41 @@ const overallProgress = computed(() => {
   return Math.round(sum / stepsProgress.value.length)
 })
 const overallLabel = computed(() => {
-  if (stepIndex.value === -1)
+  if (step.value.index === -1)
     return t('patcher.ready')
 
   if (patchDone.value)
     return t('patcher.done')
 
-  return stepActive.value ? t(`patcher.step.${stepActive.value}`) : t('patcher.inProgress')
+  return step.value.active ? t(`patcher.step.${step.value.active}`) : t('patcher.inProgress')
 })
 const stepProgress = computed(() => {
-  if (stepIndex.value === -1 || stepIndeterminate.value || patchDone.value)
+  if (step.value.index === -1 || step.value.indeterminate || patchDone.value)
     return 0
 
-  const value = stepActive.value === 'download'
-    ? fileProgress.value
-    : stepsProgress.value[stepIndex.value]
+  const value = step.value.active === 'download'
+    ? file.value.progress
+    : stepsProgress.value[step.value.index]
   return Number(value.toFixed(1))
 })
 const fileCounterLabel = computed(() => {
-  return `[${fileIndex.value + 1} / ${filesTotal.value}]`
+  return `[${file.value.index + 1} / ${filesTotal.value}]`
 })
 const fileStatusLabel = computed(() => {
-  if (!stepActive.value)
+  if (!step.value.active)
     return t('patcher.waiting')
 
   if (patchDone.value)
     return t('patcher.done')
 
   return filesTotal.value
-    ? fileName.value
+    ? file.value.name
     : t('patcher.busying')
 })
 const fileProgressLabel = computed(() => {
-  if (stepActive.value === 'download') {
-    const size = `${humanStorageSize(fileReceivedBytes.value)} / ${humanStorageSize(fileSize.value)}`
-    const speed = `${fileSpeed.value === Infinity ? '0B' : humanStorageSize(fileSpeed.value)}/s`
+  if (step.value.active === 'download') {
+    const size = `${humanStorageSize(file.value.receivedBytes)} / ${humanStorageSize(file.value.size)}`
+    const speed = `${file.value.speed === Infinity ? '0B' : humanStorageSize(file.value.speed)}/s`
     return `${size} (${speed})`
   }
   return null
@@ -246,7 +254,7 @@ watch(overallProgress, (value) => {
 
 const { init, on, off } = window.__KP_CORE__.patcher
 on('start', (data) => {
-  stepIndex.value = -1
+  step.value.index = -1
   busy.value = true
   stepsProgress.value = Array(data.count).fill(0)
   window.__KP_APP__.setProgressBar(true)
@@ -255,49 +263,49 @@ on('end', async () => {
   filesTotal.value = 0
   await checkStatus(props.region.code)
   busy.value = false
-  stepIndeterminate.value = false
+  step.value.indeterminate = false
   window.__KP_APP__.setProgressBar(false)
   ensureRegistrySetting(true)
 })
 on('step-start', (data) => {
-  stepIndex.value = data.stepIndex
-  stepActive.value = data.name
-  fileIndex.value = -1
-  fileName.value = ''
+  step.value.index = data.stepIndex
+  step.value.active = data.name
+  file.value.index = -1
+  file.value.name = ''
 
   if (data.indeterminate)
-    stepIndeterminate.value = true
+    step.value.indeterminate = true
   else
-    stepIndeterminate.value = false
+    step.value.indeterminate = false
 
   filesTotal.value = data.count ?? 0
 })
 on('step-update', (data) => {
-  fileIndex.value = data.fileIndex
+  file.value.index = data.fileIndex
 
   const increaseStepProgress = () => {
     stepsProgress.value[data.stepIndex] = (data.fileIndex + 1) / filesTotal.value * 100
   }
 
   if (data.type === 'file-meta')
-    fileSize.value = data.meta.size
+    file.value.size = data.meta.size
   else if (data.type === 'file-start') {
-    fileName.value = data.file
-    fileProgress.value = 0
-    fileSize.value = 0
-    fileReceivedBytes.value = 0
+    file.value.name = data.file
+    file.value.progress = 0
+    file.value.size = 0
+    file.value.receivedBytes = 0
   } else if (data.type === 'file-download') {
-    fileProgress.value = data.progress?.percentage ?? 0
+    file.value.progress = data.progress?.percentage ?? 0
     if (data.progress?.speed && !isNaN(data.progress?.speed))
-      fileSpeed.value = data.progress?.speed
-    fileReceivedBytes.value = data.progress?.bytes ?? 0
+      file.value.speed = data.progress?.speed
+    file.value.receivedBytes = data.progress?.bytes ?? 0
   } else if (data.type === 'file-build') {
     // Too fast so do nothing
   } else if (data.type === 'file-end') {
-    fileProgress.value = 100
+    file.value.progress = 100
     increaseStepProgress()
   } else {
-    fileName.value = data.file
+    file.value.name = data.file
     if (filesTotal.value)
       increaseStepProgress()
   }
