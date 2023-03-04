@@ -1,7 +1,7 @@
 name: Node.js CI
 on:
   push:
-    tags:        
+    tags:
       - '*'
 jobs:
   build:
@@ -15,11 +15,13 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Install deps
-      uses: borales/actions-yarn@v4
+        cache: 'yarn'
+    - run: yarn install --frozen-lockfile
+    - run: yarn build
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
       with:
-        cmd: install
-    - name: Build app
-      uses: borales/actions-yarn@v4
-      with:
-        cmd: build
+        file: dist/KartPatcher-$tag.zip
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref }}
+        body: Changelog coming soon
