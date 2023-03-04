@@ -1,0 +1,25 @@
+name: Node.js CI
+on:
+  push:
+    tags:        
+      - '*'
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install deps
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: install
+    - name: Build app
+      uses: borales/actions-yarn@v4
+      with:
+        cmd: build
