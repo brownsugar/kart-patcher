@@ -29,4 +29,3 @@ jobs:
       with:
         body: ${{ steps.changelog.outputs.changes }}
         files: 'dist/KartPatcher-${{ github.ref_name }}.zip'
-        draft: true
