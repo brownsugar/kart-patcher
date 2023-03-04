@@ -21,7 +21,8 @@ jobs:
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
       with:
-        file: dist/KartPatcher-$tag.zip
+        file: dist/KartPatcher.zip
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{ github.ref }}
+        asset_name: KartPatcher-$tag.zip
         body: Changelog coming soon
