@@ -1,6 +1,6 @@
 {
   "name": "kart-patcher",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A modern game client patcher of KartRider.",
   "productName": "Kart Patcher",
   "author": "Brownsugar <contact@brownsugar.tw>",
