@@ -7,5 +7,6 @@ exports.default = (context) => {
 
   const path = require('path')
   const { productName } = context.configuration
-  zip.writeZip(path.resolve(__dirname, `../dist/${productName}.zip`))
+  const package = require('../package.json')
+  zip.writeZip(path.resolve(__dirname, `../dist/${productName}-v${package.version}.zip`))
 }

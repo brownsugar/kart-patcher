@@ -2,9 +2,9 @@ name: Node.js CI
 on:
   push:
     tags:
-      - '*'
+      - 'v*.*.*'
 jobs:
-  build:
+  release:
     runs-on: windows-latest
     strategy:
       matrix:
@@ -18,11 +18,14 @@ jobs:
         cache: 'yarn'
     - run: yarn install --frozen-lockfile
     - run: yarn build
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v2
+    - name: Build Changelog
+      id: github_release
+      uses: mikepenz/release-changelog-builder-action@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
       with:
-        file: dist/KartPatcher.zip
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ github.ref }}
-        asset_name: KartPatcher-$tag.zip
-        body: Changelog coming soon
+        body: ${{steps.github_release.outputs.changelog}}
+        files: 'dist/KartPatcher-${{ github.ref }}.zip'
+        draft: true
