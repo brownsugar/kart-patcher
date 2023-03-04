@@ -87,53 +87,63 @@ import {
   computed,
   watch,
   onMounted,
+  onBeforeUnmount,
   nextTick
 } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import type { QToolbar } from 'quasar'
+import { useUpdater } from 'src/composables/updater'
 
 const toolbar = ref<QToolbar>()
 const indicator = ref<HTMLDivElement>()
 const indicatorOffsetX = ref(-1)
+const timeout = ref<NodeJS.Timeout>()
+const repo = process.env.GITHUB_REPO!
+
 const route = useRoute()
 const { t } = useI18n()
+const { updateAvailable, check } = useUpdater(repo, window.__KP_APP__.version)
 
-const headerMenuItems = computed(() => [
-  {
-    icon: 'fa-solid fa-home',
-    label: t('menu.home'),
-    to: '/'
-  },
-  {
-    icon: 'fa-solid fa-gear',
-    label: t('menu.settings'),
-    to: '/setting'
-  },
-  {
-    icon: 'fa-solid fa-rocket',
-    label: t('menu.updateAvailable'),
-    href: 'https://github.com/brownsugar/kartrider-patcher/releases/latest',
-    color: 'warning'
-  },
-  {
-    separator: true
-  },
-  {
-    icon: 'fa-solid fa-minus',
-    label: t('menu.minimize'),
-    method: () => {
-      window.__KP_APP__.minimize()
+const headerMenuItems = computed(() => {
+  const items = [
+    {
+      icon: 'fa-solid fa-home',
+      label: t('menu.home'),
+      to: '/'
+    },
+    {
+      icon: 'fa-solid fa-gear',
+      label: t('menu.settings'),
+      to: '/setting'
+    },
+    {
+      icon: 'fa-solid fa-rocket',
+      label: t('menu.updateAvailable'),
+      href: `https://github.com/${repo}/releases/latest`,
+      color: 'warning',
+      hidden: !updateAvailable.value
+    },
+    {
+      separator: true
+    },
+    {
+      icon: 'fa-solid fa-minus',
+      label: t('menu.minimize'),
+      method: () => {
+        window.__KP_APP__.minimize()
+      }
+    },
+    {
+      icon: 'fa-solid fa-xmark',
+      label: t('menu.exit'),
+      method: () => {
+        window.__KP_APP__.close()
+      }
     }
-  },
-  {
-    icon: 'fa-solid fa-xmark',
-    label: t('menu.exit'),
-    method: () => {
-      window.__KP_APP__.close()
-    }
-  }
-])
+  ]
+  return items.filter(item => !item.hidden)
+})
 
 const styleFn = (offset: number) => {
   return { height: offset ? `calc(100vh - ${offset}px + 16px)` : '100vh' }
@@ -161,11 +171,19 @@ const updateIndicatorStyle = async () => {
   const { left: btnLeft, width: btnWidth } = activeBtnEl.getBoundingClientRect()
   indicatorOffsetX.value = btnLeft + (btnWidth - indicatorWidth) / 2
 }
+const checkUpdate = async () => {
+  await check()
+  timeout.value = setTimeout(checkUpdate, 60_000 * 5)
+}
 
 watch(() => route.path, updateIndicatorStyle)
 
 onMounted(() => {
   updateIndicatorStyle()
+  checkUpdate()
+})
+onBeforeUnmount(() => {
+  clearTimeout(timeout.value)
 })
 </script>
 <script lang="ts">

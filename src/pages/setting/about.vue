@@ -32,14 +32,14 @@
       <q-item-section side>
         <q-item-label>
           <a
-            href="https://github.com/brownsugar/kart-patcher"
+            :href="`https://github.com/${repo}`"
             target="_blank"
           >
             <q-icon
               name="fa-brands fa-github"
               size="xs"
             />
-            brownsugar/kart-patcher</a>
+            {{ repo }}</a>
         </q-item-label>
       </q-item-section>
     </q-item>
@@ -77,6 +77,7 @@
 import { defineComponent } from 'vue'
 
 const version = window.__KP_APP__.version
+const repo = process.env.GITHUB_REPO
 </script>
 <script lang="ts">
 export default defineComponent({

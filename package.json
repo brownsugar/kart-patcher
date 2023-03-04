@@ -12,10 +12,15 @@
     "lint:style": "stylelint \"**/*.{s?(a|c)ss,vue}\" --ignore-path .gitignore",
     "postversion": "git push && git push --tags"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brownsugar/kart-patcher.git"
+  },
   "dependencies": {
     "@electron/remote": "^2.0.9",
     "@quasar/extras": "^1.15.11",
     "buffer-reader": "^0.1.0",
+    "compare-versions": "^6.0.0-rc.1",
     "easydl": "^1.0.3",
     "electron-log": "^5.0.0-beta.16",
     "electron-store": "^8.1.0",
