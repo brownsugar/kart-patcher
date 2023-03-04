@@ -9,7 +9,8 @@
     "dev": "quasar dev -m electron --devtools",
     "build": "quasar build -m electron",
     "lint:js": "eslint --ext .js,.ts,.vue ./",
-    "lint:style": "stylelint \"**/*.{s?(a|c)ss,vue}\" --ignore-path .gitignore"
+    "lint:style": "stylelint \"**/*.{s?(a|c)ss,vue}\" --ignore-path .gitignore",
+    "postversion": "git push && git push --tags"
   },
   "dependencies": {
     "@electron/remote": "^2.0.9",
