@@ -66,11 +66,17 @@ module.exports = configure((/* ctx */) => {
     // https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
     electron: {
       inspectPort: 5858,
-      bundler: 'packager',
-      packager: {
-        // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
-        // Windows only
-        // win32metadata: { ... }
+      bundler: 'builder',
+      builder: {
+        appId: 'com.brownsugar.kartpatcher',
+        productName: 'KartPatcher',
+        win: {
+          target: 'portable'
+        },
+        portable: {
+          // eslint-disable-next-line no-template-curly-in-string
+          artifactName: '${productName}.${ext}'
+        }
       }
     }
   }

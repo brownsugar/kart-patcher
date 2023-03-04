@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A modern game client patcher of KartRider.",
   "productName": "Kart Patcher",
-  "author": "Lay <contact@brownsugar.tw>",
+  "author": "Brownsugar <contact@brownsugar.tw>",
   "private": true,
   "scripts": {
     "dev": "quasar dev -m electron --devtools",
@@ -14,7 +14,6 @@
   "dependencies": {
     "@electron/remote": "^2.0.9",
     "@quasar/extras": "^1.15.11",
-    "@types/winreg": "^1.2.31",
     "buffer-reader": "^0.1.0",
     "easydl": "^1.0.3",
     "electron-log": "^5.0.0-beta.16",
@@ -37,9 +36,11 @@
     "@types/buffer-reader": "^0.1.0",
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^18.14.5",
+    "@types/winreg": "^1.2.31",
     "@vue/devtools": "^6.5.0",
     "autoprefixer": "^10.4.13",
     "electron": "^23.1.1",
+    "electron-builder": "^23.6.0",
     "eslint": "^8.35.0",
     "stylelint": "^15.2.0",
     "typescript": "^4.9.5"
