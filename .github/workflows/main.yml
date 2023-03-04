@@ -19,13 +19,14 @@ jobs:
     - run: yarn install --frozen-lockfile
     - run: yarn build
     - name: Build Changelog
-      id: github_release
-      uses: mikepenz/release-changelog-builder-action@v3
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      id: changelog
+      uses: requarks/changelog-action@v1
+      with:
+        token: ${{ github.token }}
+        tag: ${{ github.ref_name }}
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        body: ${{steps.github_release.outputs.changelog}}
-        files: 'dist/KartPatcher-${{ github.ref }}.zip'
+        body: ${{ steps.changelog.outputs.changes }}
+        files: 'dist/KartPatcher-${{ github.ref_name }}.zip'
         draft: true
