@@ -76,7 +76,8 @@ module.exports = configure((/* ctx */) => {
         portable: {
           // eslint-disable-next-line no-template-curly-in-string
           artifactName: '${productName}.${ext}'
-        }
+        },
+        afterAllArtifactBuild: './scripts/after-build.js'
       }
     }
   }

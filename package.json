@@ -39,6 +39,7 @@
     "@types/node": "^18.14.5",
     "@types/winreg": "^1.2.31",
     "@vue/devtools": "^6.5.0",
+    "adm-zip": "^0.5.10",
     "autoprefixer": "^10.4.13",
     "electron": "^23.1.1",
     "electron-builder": "^23.6.0",
