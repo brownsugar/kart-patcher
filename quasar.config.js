@@ -69,7 +69,6 @@ module.exports = configure((/* ctx */) => {
       bundler: 'builder',
       builder: {
         appId: 'com.brownsugar.kartpatcher',
-        productName: 'KartPatcher',
         win: {
           target: 'portable'
         },
