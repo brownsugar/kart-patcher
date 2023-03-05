@@ -4,7 +4,6 @@ import { mkdir, rm } from 'fs/promises'
 import { resolve, dirname } from 'path'
 import { createGunzip } from 'zlib'
 import { move } from 'fs-extra'
-import { utimes } from 'utimes'
 import EasyDl from 'easydl'
 import checkDiskSpace from 'check-disk-space'
 import { resolveUrl, fetch } from '../utils'
@@ -436,6 +435,7 @@ class KartPatcher extends EventEmitter {
         })
       }
       // Restore file modification time
+      const { utimes } = require('utimes')
       await utimes(localFile.path, {
         mtime: this.filetimeToUnix(patchFile.dwHighDateTime, patchFile.dwLowDateTime)
       })
