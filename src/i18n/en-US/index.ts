@@ -110,6 +110,7 @@ export default {
     step: {
       processPatchInfo: 'Processing patch info',
       checkLocal: 'Checking local files',
+      checkDisk: 'Checking disk space',
       download: 'Downloading files',
       extract: 'Extracting files',
       apply: 'Applying files',

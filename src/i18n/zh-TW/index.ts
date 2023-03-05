@@ -110,6 +110,7 @@ export default {
     step: {
       processPatchInfo: '獲取更新資訊中',
       checkLocal: '檢查本機檔案中',
+      checkDisk: '檢查硬碟空間中',
       download: '下載檔案中',
       extract: '解壓縮檔案中',
       apply: '套用檔案中',

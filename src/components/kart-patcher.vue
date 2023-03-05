@@ -148,6 +148,7 @@ const notify = useNotify()
 type stepT =
   | 'processPatchInfo'
   | 'checkLocal'
+  | 'checkDisk'
   | 'download'
   | 'extract'
   | 'apply'
@@ -287,12 +288,12 @@ on('step-update', (data) => {
     stepsProgress.value[data.stepIndex] = (data.fileIndex + 1) / filesTotal.value * 100
   }
 
-  if (data.type === 'file-meta')
-    file.value.size = data.meta.size
-  else if (data.type === 'file-start') {
+  if (data.type === 'file-meta') {
+    // file.value.size = data.meta.size
+  } else if (data.type === 'file-start') {
     file.value.name = data.file
+    file.value.size = data.size ?? 0
     file.value.progress = 0
-    file.value.size = 0
     file.value.receivedBytes = 0
   } else if (data.type === 'file-download') {
     file.value.progress = data.progress?.percentage ?? 0

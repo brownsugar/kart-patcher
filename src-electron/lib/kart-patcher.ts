@@ -6,6 +6,7 @@ import { createGunzip } from 'zlib'
 import { move } from 'fs-extra'
 import { utimes } from 'utimes'
 import EasyDl from 'easydl'
+import checkDiskSpace from 'check-disk-space'
 import { resolveUrl, fetch } from '../utils'
 import { PatchFile, LocalFile } from './kart-files'
 
@@ -17,6 +18,7 @@ type stepStartT = {
   name:
   | 'processPatchInfo'
   | 'checkLocal'
+  | 'checkDisk'
   | 'download'
   | 'extract'
   | 'apply'
@@ -29,6 +31,7 @@ type stepUpdate = {
   fileIndex: number
   file: string
   type?: 'file-start'
+  size?: number
 } | {
   stepIndex: number
   fileIndex: number
@@ -81,7 +84,10 @@ class KartPatcher extends EventEmitter {
   tempPath: string
 
   patchFiles: PatchFile[] = []
-  downloadQueue: LocalFile[] = []
+  downloadQueue: {
+    localFile: LocalFile
+    patchFile: PatchFile
+  }[] = []
 
   patchFileIndexMap = new Map<string, number>()
 
@@ -100,6 +106,7 @@ class KartPatcher extends EventEmitter {
     const steps = [
       this.processPatchInfo,
       this.checkLocal,
+      this.checkDisk,
       this.download,
       this.extract,
       this.apply,
@@ -190,7 +197,41 @@ class KartPatcher extends EventEmitter {
       }
 
       this.patchFileIndexMap.set(patchFile.path, i)
-      this.downloadQueue.push(localFile)
+      this.downloadQueue.push({
+        localFile,
+        patchFile
+      })
+    }
+
+    this.emit('step-end', {
+      stepIndex
+    })
+  }
+
+  async checkDisk (stepIndex: number) {
+    this.emit('step-start', {
+      stepIndex,
+      name: 'checkDisk',
+      indeterminate: true
+    })
+
+    const estimatedSize = this.downloadQueue.reduce((sum, { localFile, patchFile }) => {
+      if (localFile.target === 'full')
+        sum += patchFile.sizeGzipped + patchFile.size
+      else if (localFile.target === 'delta1')
+        sum += patchFile.delta1Size
+      else if (localFile.target === 'delta2')
+        sum += patchFile.delta2Size
+      return sum
+    }, 0)
+    const diskSpace = await checkDiskSpace(this.localPath)
+    if (diskSpace.free < estimatedSize) {
+      throw new Error('INSUFFICIENT_DISK_SPACE', {
+        cause: {
+          free: diskSpace.free,
+          estimated: estimatedSize
+        }
+      })
     }
 
     this.emit('step-end', {
@@ -213,21 +254,28 @@ class KartPatcher extends EventEmitter {
     })
 
     for (let i = 0; i < fileCount; i++) {
-      const file = this.downloadQueue[i]
+      const { localFile, patchFile } = this.downloadQueue[i]
 
       this.emit('step-update', {
         stepIndex,
         fileIndex: i,
-        file: file.basename,
-        type: 'file-start'
+        file: localFile.basename,
+        type: 'file-start',
+        size: localFile.target === 'full'
+          ? patchFile.sizeGzipped
+          : (
+            localFile.target === 'delta1'
+              ? patchFile.delta1Size
+              : patchFile.delta2Size
+          )
       })
 
-      const localPath = file.getDownloadPath()
+      const localPath = localFile.getDownloadPath()
       await this.createDirectory(localPath)
 
       const downloader =
         new EasyDl(
-          resolveUrl(this.remoteUrl, file.getRawFilePath()),
+          resolveUrl(this.remoteUrl, localFile.getRawFilePath()),
           localPath,
           {
             connections: this.options.connections,
@@ -295,19 +343,19 @@ class KartPatcher extends EventEmitter {
     })
 
     for (let i = 0; i < fileCount; i++) {
-      const file = this.downloadQueue[i]
+      const { localFile } = this.downloadQueue[i]
 
       this.emit('step-update', {
         stepIndex,
         fileIndex: i,
-        file: file.basename
+        file: localFile.basename
       })
 
-      if (file.target === 'full') {
-        const downloaded = file.getDownloadPath()
+      if (localFile.target === 'full') {
+        const downloaded = localFile.getDownloadPath()
         await this.ungzip(downloaded)
         await rm(downloaded)
-        file.extracted = true
+        localFile.extracted = true
       }
     }
 
@@ -326,19 +374,24 @@ class KartPatcher extends EventEmitter {
     })
 
     for (let i = 0; i < fileCount; i++) {
-      const file = this.downloadQueue[i]
+      const { localFile } = this.downloadQueue[i]
 
       this.emit('step-update', {
         stepIndex,
         fileIndex: i,
-        file: file.basename
+        file: localFile.basename
       })
 
-      await move(file.getDownloadPath(), file.path, {
+      await move(localFile.getDownloadPath(), localFile.path, {
         overwrite: true
       })
-      await file.loadMeta()
+      await localFile.loadMeta()
     }
+
+    await rm(this.tempPath, {
+      recursive: true,
+      force: true
+    })
 
     this.emit('step-end', {
       stepIndex
@@ -355,35 +408,35 @@ class KartPatcher extends EventEmitter {
     })
 
     for (let i = 0; i < fileCount; i++) {
-      const file = this.downloadQueue[i]
+      const { localFile } = this.downloadQueue[i]
 
       this.emit('step-update', {
         stepIndex,
         fileIndex: i,
-        file: file.basename
+        file: localFile.basename
       })
 
-      const patchIndex = this.patchFileIndexMap.get(file.filePath)
+      const patchIndex = this.patchFileIndexMap.get(localFile.filePath)
       if (patchIndex === undefined)
         continue
 
       const patchFile = this.patchFiles[patchIndex]
-      if (!existsSync(file.path)) {
+      if (!existsSync(localFile.path)) {
         throw new Error('FILE_NOT_EXIST', {
-          cause: file.filePath
+          cause: localFile.filePath
         })
       }
-      if (file.target !== 'full')
+      if (localFile.target !== 'full')
         continue
 
       // Check file CRC
-      if (file.crc !== patchFile.crc) {
+      if (localFile.crc !== patchFile.crc) {
         throw new Error('FILE_CRC_MISMATCH', {
-          cause: file.filePath
+          cause: localFile.filePath
         })
       }
       // Restore file modification time
-      await utimes(file.path, {
+      await utimes(localFile.path, {
         mtime: this.filetimeToUnix(patchFile.dwHighDateTime, patchFile.dwLowDateTime)
       })
     }
