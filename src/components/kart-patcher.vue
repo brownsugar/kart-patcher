@@ -123,6 +123,43 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
+  <q-dialog v-model="patchError.dialog">
+    <q-card style="width: 60%;">
+      <q-card-section class="bg-negative text-white">
+        <div class="text-h6">
+          {{ t('patcher.errorDialog.title') }}
+        </div>
+      </q-card-section>
+      <q-card-section>
+        <div class="text-body2">
+          {{ t('patcher.errorDialog.description') }}
+        </div>
+        <div class="text-caption q-mt-sm">
+          <div>
+            <strong>{{ t('patcher.errorDialog.code') }}</strong>
+            <q-chip
+              :ripple="false"
+              dense
+            >
+              {{ patchError.code }}
+            </q-chip>
+          </div>
+          <div v-if="patchError.message">
+            <strong>{{ t('patcher.errorDialog.message') }}</strong><br>
+            {{ patchError.message }}
+          </div>
+        </div>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn
+          v-close-popup
+          color="negative"
+          :label="t('general.ok')"
+          flat
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -178,6 +215,11 @@ const busy = ref(false)
 const fixRegistry = ref({
   dialog: false,
   busy: false
+})
+const patchError = ref({
+  dialog: false,
+  code: '',
+  message: ''
 })
 
 const primaryActionLabel = computed(() => {
@@ -256,15 +298,15 @@ watch(overallProgress, (value) => {
 const { init, on, off } = window.__KP_CORE__.patcher
 on('start', (data) => {
   step.value.index = -1
-  busy.value = true
   stepsProgress.value = Array(data.count).fill(0)
+  busy.value = true
   window.__KP_APP__.setProgressBar(true)
 })
 on('end', async () => {
   filesTotal.value = 0
   await checkStatus(props.region.code)
-  busy.value = false
   step.value.indeterminate = false
+  busy.value = false
   window.__KP_APP__.setProgressBar(false)
   ensureRegistrySetting(true)
 })
@@ -315,8 +357,26 @@ on('step-end', (data) => {
   stepsProgress.value[data.stepIndex] = 100
 })
 on('error', (error) => {
-  // eslint-disable-next-line no-console
-  console.error(error)
+  let message = ''
+  if (error.code === 'INSUFFICIENT_DISK_SPACE') {
+    message = t('patcher.errorDialog.insufficientDiskSpace', {
+      estimated: humanStorageSize(error.detail.estimated),
+      free: humanStorageSize(error.detail.free)
+    })
+  } else if (error.code === 'DOWNLOAD_ERROR')
+    message = error.detail.message
+
+  step.value.index = -1
+  step.value.active = null
+  step.value.indeterminate = false
+  stepsProgress.value = []
+  filesTotal.value = 0
+  busy.value = false
+  window.__KP_APP__.setProgressBar(false)
+
+  patchError.value.code = error.code
+  patchError.value.message = message
+  patchError.value.dialog = true
 })
 const patch = () => {
   const patchUrl = props.region?.server.patchUrl

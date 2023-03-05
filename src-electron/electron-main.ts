@@ -48,24 +48,24 @@ const createWindow = () => {
     }
   })
 
-  ipcHandlers.forEach(({ channel, response, listener }) => {
-    if (response !== false) {
-      ipcMain.handle(channel, (e, args = {}) => {
-        args.browserWindow = mainWindow
-        return listener(e, args)
-      })
-    } else {
-      ipcMain.on(channel, (e, args = {}) => {
-        args.browserWindow = mainWindow
-        return listener(e, args)
-      })
-    }
-  })
-
   mainWindow.on('closed', () => {
     mainWindow = undefined
   })
 }
+
+ipcHandlers.forEach(({ channel, response, listener }) => {
+  if (response !== false) {
+    ipcMain.handle(channel, (e, args = {}) => {
+      args.browserWindow = mainWindow
+      return listener(e, args)
+    })
+  } else {
+    ipcMain.on(channel, (e, args = {}) => {
+      args.browserWindow = mainWindow
+      return listener(e, args)
+    })
+  }
+})
 
 app.whenReady().then(createWindow)
 

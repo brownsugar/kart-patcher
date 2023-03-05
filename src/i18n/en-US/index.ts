@@ -5,7 +5,8 @@ export default {
   },
   general: {
     yes: 'Yes',
-    no: 'No'
+    no: 'No',
+    ok: 'OK'
   },
   region: {
     tw: 'Taiwanese Server',
@@ -101,12 +102,6 @@ export default {
     done: 'Update completed',
     waiting: 'Waiting for user action',
     busying: 'Please wait...',
-    registry: {
-      missing: 'Missed registry settings detected, game starting might be affected, do you want to fix it now?',
-      fixSuccess: 'Successfully fixed registry settings.',
-      fixFailed: 'Failed to fix registry settings.',
-      nothingToFix: 'Registry settings look good, nothing to fix.'
-    },
     step: {
       processPatchInfo: 'Processing patch info',
       checkLocal: 'Checking local files',
@@ -115,6 +110,19 @@ export default {
       extract: 'Extracting files',
       apply: 'Applying files',
       validate: 'Validating files'
+    },
+    registry: {
+      missing: 'Missed registry settings detected, game starting might be affected, do you want to fix it now?',
+      fixSuccess: 'Successfully fixed registry settings.',
+      fixFailed: 'Failed to fix registry settings.',
+      nothingToFix: 'Registry settings look good, nothing to fix.'
+    },
+    errorDialog: {
+      title: 'An error occurred',
+      description: 'There was an error during the update process, please try again later.',
+      code: 'Error code: ',
+      message: 'Error message: ',
+      insufficientDiskSpace: 'Insufficient disk space, please free up enough space and try again. (Required space: {estimated}, remaining space: {free})'
     }
   }
 }

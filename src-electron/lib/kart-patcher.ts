@@ -6,6 +6,7 @@ import { createGunzip } from 'zlib'
 import { move } from 'fs-extra'
 import EasyDl from 'easydl'
 import checkDiskSpace from 'check-disk-space'
+import log from 'electron-log'
 import { resolveUrl, fetch } from '../utils'
 import { PatchFile, LocalFile } from './kart-files'
 
@@ -54,13 +55,35 @@ type stepUpdate = {
 type stepEndT = {
   stepIndex: number
 }
+type stepErrorT = {
+  code: 'INVALID_PATCH_INFO_FILE'
+} | {
+  code: 'INSUFFICIENT_DISK_SPACE'
+  detail: {
+    free: number
+    estimated: number
+  }
+} | {
+  code: 'DOWNLOAD_ERROR'
+  detail: Error
+} | {
+  code: 'FILE_NOT_EXIST'
+  detail: {
+    file: string
+  }
+} | {
+  code: 'FILE_CRC_MISMATCH'
+  detail: {
+    file: string
+  }
+}
 interface KartPatcher {
   emit (event: 'start', data: patcherStartT): boolean
   emit (event: 'end'): boolean
   emit (event: 'step-start', data: stepStartT): boolean
   emit (event: 'step-update', data: stepUpdate): boolean
   emit (event: 'step-end', data: stepEndT): boolean
-  emit (event: 'error', error: Error): boolean
+  emit (event: 'error', error: stepErrorT): boolean
 }
 interface IKartPatcherOptions {
   deltaMode?: boolean
@@ -71,11 +94,21 @@ export interface IKartPatcherEventCallback {
   on (event: 'step-start', listener: (data: stepStartT) => void): void
   on (event: 'step-update', listener: (data: stepUpdate) => void): void
   on (event: 'step-end', listener: (data: stepEndT) => void): void
-  on (event: 'error', listener: (error: Error) => void): void
+  on (event: 'error', listener: (error: stepErrorT) => void): void
 }
 
 const delay = (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms))
+
+class PatchError extends Error {
+  cause: stepErrorT
+
+  constructor (error: stepErrorT) {
+    super(error.code)
+    this.name = 'PatchError'
+    this.cause = error
+  }
+}
 
 class KartPatcher extends EventEmitter {
   remoteUrl: string
@@ -102,23 +135,30 @@ class KartPatcher extends EventEmitter {
   }
 
   async run () {
-    const steps = [
-      this.processPatchInfo,
-      this.checkLocal,
-      this.checkDisk,
-      this.download,
-      this.extract,
-      this.apply,
-      this.validate
-    ]
-    this.emit('start', {
-      count: steps.length
-    })
-    for (const index in steps) {
-      await steps[index].call(this, Number(index))
-      await delay(300)
+    try {
+      const steps = [
+        this.processPatchInfo,
+        this.checkLocal,
+        this.checkDisk,
+        this.download,
+        this.extract,
+        this.apply,
+        this.validate
+      ]
+      this.emit('start', {
+        count: steps.length
+      })
+      for (const index in steps) {
+        await steps[index].call(this, Number(index))
+        await delay(300)
+      }
+      this.emit('end')
+    } catch (e) {
+      if (e instanceof PatchError)
+        this.emit('error', e.cause)
+      else
+        log.debug('[KartPatcher] Unhandled error', e)
     }
-    this.emit('end')
   }
 
   async processPatchInfo (stepIndex: number) {
@@ -135,8 +175,8 @@ class KartPatcher extends EventEmitter {
     // 300 = CA, Kart zip
     // 400 = Combat arms
     if (!data.startsWith('NFO200')) {
-      throw new Error('INVALID_PATCH_INFO_FILE', {
-        cause: data
+      throw new PatchError({
+        code: 'INVALID_PATCH_INFO_FILE'
       })
     }
 
@@ -225,8 +265,9 @@ class KartPatcher extends EventEmitter {
     }, 0)
     const diskSpace = await checkDiskSpace(this.localPath)
     if (diskSpace.free < estimatedSize) {
-      throw new Error('INSUFFICIENT_DISK_SPACE', {
-        cause: {
+      throw new PatchError({
+        code: 'INSUFFICIENT_DISK_SPACE',
+        detail: {
           free: diskSpace.free,
           estimated: estimatedSize
         }
@@ -316,7 +357,10 @@ class KartPatcher extends EventEmitter {
             })
           })
           .on('error', (error) => {
-            this.emit('error', error)
+            throw new PatchError({
+              code: 'DOWNLOAD_ERROR',
+              detail: error
+            })
           })
       await downloader.wait()
 
@@ -421,8 +465,11 @@ class KartPatcher extends EventEmitter {
 
       const patchFile = this.patchFiles[patchIndex]
       if (!existsSync(localFile.path)) {
-        throw new Error('FILE_NOT_EXIST', {
-          cause: localFile.filePath
+        throw new PatchError({
+          code: 'FILE_NOT_EXIST',
+          detail: {
+            file: localFile.filePath
+          }
         })
       }
       if (localFile.target !== 'full')
@@ -430,8 +477,11 @@ class KartPatcher extends EventEmitter {
 
       // Check file CRC
       if (localFile.crc !== patchFile.crc) {
-        throw new Error('FILE_CRC_MISMATCH', {
-          cause: localFile.filePath
+        throw new PatchError({
+          code: 'FILE_CRC_MISMATCH',
+          detail: {
+            file: localFile.filePath
+          }
         })
       }
       // Restore file modification time
