@@ -163,7 +163,16 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, ref, computed, watch, onBeforeUnmount } from 'vue'
+import {
+  PropType,
+  ref,
+  computed,
+  watch,
+  onBeforeUnmount
+} from 'vue'
+import {
+  onBeforeRouteLeave
+} from 'vue-router'
 import { format } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRegionStore, regionStatus } from 'stores/region'
@@ -441,6 +450,13 @@ const writeRegistry = async () => {
     notify.warning(t('patcher.registry.fixFailed'))
 }
 
+onBeforeRouteLeave((_to, _from, next) => {
+  if (busy.value) {
+    notify.warning(t('patcher.noLeaving'))
+    return
+  }
+  next()
+})
 onBeforeUnmount(() => {
   off()
 })

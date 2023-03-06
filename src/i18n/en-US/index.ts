@@ -102,6 +102,7 @@ export default {
     done: 'Update completed',
     waiting: 'Waiting for user action',
     busying: 'Please wait...',
+    noLeaving: 'No leaving during the update process, please wait for the update to complete.',
     step: {
       processPatchInfo: 'Processing patch info',
       checkLocal: 'Checking local files',

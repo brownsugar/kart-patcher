@@ -102,6 +102,7 @@ export default {
     done: '更新完成',
     waiting: '等候操作',
     busying: '請稍候...',
+    noLeaving: '更新過程中無法離開，請靜候更新完成。',
     step: {
       processPatchInfo: '獲取更新資訊中',
       checkLocal: '檢查本機檔案中',

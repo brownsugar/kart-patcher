@@ -104,6 +104,3 @@ export default defineComponent({
   name: 'PageRegion'
 })
 </script>
-
-<style lang="scss" scoped>
-</style>
