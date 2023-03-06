@@ -169,8 +169,7 @@ class KartPatcher extends EventEmitter {
     })
 
     const url = resolveUrl(this.remoteUrl, 'files.nfo2')
-    const response = await fetch(url)
-    const data = await response.text()
+    const data = await fetch(url)
     // 200 = Kart
     // 300 = CA, Kart zip
     // 400 = Combat arms
