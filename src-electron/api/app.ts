@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import { BrowserWindow } from '@electron/remote'
+import { BrowserWindow, app } from '@electron/remote'
 import type { OpenDialogOptions } from 'electron'
 import type { RegistryItem } from 'winreg'
 
@@ -20,7 +20,9 @@ interface IApiApp {
 }
 
 const api: IApiApp = {
-  version: process.env.npm_package_version ?? '',
+  version: process.env.npm_package_version ??
+    app.getVersion() ??
+    '',
   minimize: () => {
     BrowserWindow.getFocusedWindow()?.minimize()
   },
