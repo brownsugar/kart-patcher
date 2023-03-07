@@ -121,8 +121,6 @@ class KartPatcher extends EventEmitter {
     patchFile: PatchFile
   }[] = []
 
-  patchFileIndexMap = new Map<string, number>()
-
   constructor (
     readonly patchUrl: string,
     readonly version: number,
@@ -226,7 +224,7 @@ class KartPatcher extends EventEmitter {
         if (localFile.crc === patchFile.crc)
           continue
 
-        if (this.options.deltaMode) {
+        if (this.options.deltaMode && patchFile.path !== 'KartRider.pin') {
           if (localFile.crc === patchFile.delta1TargetCrc)
             localFile.target = 'delta1'
           else if (localFile.crc === patchFile.delta2TargetCrc)
@@ -234,7 +232,6 @@ class KartPatcher extends EventEmitter {
         }
       }
 
-      this.patchFileIndexMap.set(patchFile.path, i)
       this.downloadQueue.push({
         localFile,
         patchFile
@@ -393,12 +390,13 @@ class KartPatcher extends EventEmitter {
         file: localFile.basename
       })
 
-      if (localFile.target === 'full') {
-        const downloaded = localFile.getDownloadPath()
-        await this.ungzip(downloaded)
-        await rm(downloaded)
-        localFile.extracted = true
-      }
+      if (localFile.target !== 'full')
+        continue
+
+      const downloaded = localFile.getDownloadPath()
+      await this.ungzip(downloaded)
+      await rm(downloaded)
+      localFile.extracted = true
     }
 
     this.emit('step-end', {
@@ -424,10 +422,9 @@ class KartPatcher extends EventEmitter {
         file: localFile.basename
       })
 
-      await move(localFile.getDownloadPath(), localFile.path, {
+      await move(localFile.getDownloadPath(), localFile.getDestinationPath(), {
         overwrite: true
       })
-      await localFile.loadMeta()
     }
 
     await rm(this.tempPath, {
@@ -450,7 +447,7 @@ class KartPatcher extends EventEmitter {
     })
 
     for (let i = 0; i < fileCount; i++) {
-      const { localFile } = this.downloadQueue[i]
+      const { localFile, patchFile } = this.downloadQueue[i]
 
       this.emit('step-update', {
         stepIndex,
@@ -458,12 +455,7 @@ class KartPatcher extends EventEmitter {
         file: localFile.basename
       })
 
-      const patchIndex = this.patchFileIndexMap.get(localFile.filePath)
-      if (patchIndex === undefined)
-        continue
-
-      const patchFile = this.patchFiles[patchIndex]
-      if (!existsSync(localFile.path)) {
+      if (!existsSync(localFile.getDestinationPath())) {
         throw new PatchError({
           code: 'FILE_NOT_EXIST',
           detail: {
@@ -471,10 +463,12 @@ class KartPatcher extends EventEmitter {
           }
         })
       }
+
       if (localFile.target !== 'full')
         continue
 
       // Check file CRC
+      await localFile.loadMeta()
       if (localFile.crc !== patchFile.crc) {
         throw new PatchError({
           code: 'FILE_CRC_MISMATCH',

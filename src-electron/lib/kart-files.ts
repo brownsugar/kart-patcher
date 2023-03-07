@@ -156,6 +156,10 @@ export class LocalFile extends KartCrc {
     return true
   }
 
+  getDestinationPath () {
+    return resolve(this.basePath, this.getRawFilePath())
+  }
+
   getDownloadPath () {
     return resolve(this.basePath, this.tempDir, this.getRawFilePath())
   }

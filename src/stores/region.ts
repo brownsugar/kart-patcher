@@ -164,9 +164,9 @@ export const useRegionStore = defineStore('region', {
         return
       }
 
+      const { existsSync } = window.__KP_UTILS__.fs
       const { resolve } = window.__KP_UTILS__.path
       const pinFile = regionPresets[regionCode].pinFile
-      const { existsSync } = window.__KP_UTILS__.fs
       const installed = existsSync(resolve(path, pinFile))
       let host = ''
       let port = 0
