@@ -232,7 +232,7 @@ const patchError = ref({
 })
 
 const primaryActionLabel = computed(() => {
-  if (props.region.status === regionStatus.LATEST_VERSION)
+  if ([regionStatus.LATEST_VERSION, regionStatus.CLIENT_DAMAGED].includes(props.region.status))
     return t('patcher.repair')
   if (props.region.status === regionStatus.CLIENT_OUTDATED)
     return t('patcher.updateNow')

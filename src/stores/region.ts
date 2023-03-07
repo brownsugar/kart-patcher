@@ -10,10 +10,11 @@ export enum regionStatus {
   'UNKNOWN' = 0,
   'LATEST_VERSION' = 100,
   'CLIENT_OUTDATED' = 200,
+  'CLIENT_DAMAGED' = 201,
   'CLIENT_NOT_FOUND' = 300,
   'CLIENT_PATH_NOT_SET' = 301,
   'SERVER_UNREACHABLE' = 400,
-  'SERVER_NOT_FOUND' = 401,
+  'SERVER_NOT_FOUND' = 401
 }
 
 export interface IRegionPreset {
@@ -167,35 +168,44 @@ export const useRegionStore = defineStore('region', {
       const { resolve } = window.__KP_UTILS__.path
       const pinFile = regionPresets[regionCode].pinFile
       const installed = existsSync(resolve(path, pinFile))
-      try {
-        if (installed) {
+      let host = ''
+      let port = 0
+      let damaged = false
+
+      if (installed) {
+        try {
           const pin = await window.__KP_CORE__.parsePin(path, pinFile)
           this[regionCode].client.version = pin.clientVersion
+          host = pin.server.host
+          port = pin.server.port
+        } catch (e: any) {
+          damaged = true
+          log.error('[Store][Region][checkStatus]', e)
+        }
+      }
 
-          const host = pin.server.host
-          const port = pin.server.port
-          this[regionCode].server.host = host
-          this[regionCode].server.port = port
+      if (!host || !port) {
+        host = regionPresets[regionCode].defaultServer.host
+        port = regionPresets[regionCode].defaultServer.port
+      }
 
-          const patchServer = await window.__KP_CORE__.connectPatchSocket(host, port)
-          this[regionCode].server.version = patchServer.version
-          this[regionCode].server.patchUrl = patchServer.endpoint
+      try {
+        this[regionCode].server.host = host
+        this[regionCode].server.port = port
 
-          if (patchServer.version === pin.clientVersion)
+        const patchServer = await window.__KP_CORE__.connectPatchSocket(host, port)
+        this[regionCode].server.version = patchServer.version
+        this[regionCode].server.patchUrl = patchServer.endpoint
+
+        if (damaged)
+          this.updateStatus(regionCode, regionStatus.CLIENT_DAMAGED)
+        else if (installed) {
+          if (patchServer.version === this[regionCode].client.version)
             this.updateStatus(regionCode, regionStatus.LATEST_VERSION)
           else
             this.updateStatus(regionCode, regionStatus.CLIENT_OUTDATED)
-        } else {
-          const { host, port } = regionPresets[regionCode].defaultServer
-          this[regionCode].server.host = host
-          this[regionCode].server.port = port
-
-          const patchServer = await window.__KP_CORE__.connectPatchSocket(host, port)
-          this[regionCode].server.version = patchServer.version
-          this[regionCode].server.patchUrl = patchServer.endpoint
-
+        } else
           this.updateStatus(regionCode, regionStatus.CLIENT_NOT_FOUND)
-        }
       } catch (e: any) {
         if (e.message === 'timeout')
           this.updateStatus(regionCode, regionStatus.SERVER_UNREACHABLE)

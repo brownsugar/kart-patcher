@@ -34,53 +34,59 @@ export default class KartPin {
   }
 
   async parse () {
-    const buffer = await this.uncompress(this.pinFile)
-    const reader = new BufferManager(buffer)
-    reader.move(0x09)
+    try {
+      const buffer = await this.uncompress(this.pinFile)
+      const reader = new BufferManager(buffer)
+      reader.move(0x09)
 
-    const clientVersion = reader.nextShort()
-    reader.move(0x03)
+      const clientVersion = reader.nextShort()
+      reader.move(0x03)
 
-    const id = reader.nextStringAuto()
-    const officialSiteUrl = reader.nextStringAuto()
-    const officialPatchUrl = reader.nextStringAuto()
-    reader.move(0x05)
+      const id = reader.nextStringAuto()
+      const officialSiteUrl = reader.nextStringAuto()
+      const officialPatchUrl = reader.nextStringAuto()
+      reader.move(0x05)
 
-    const server: Partial<IKartPin['server']> = {}
-    server.name = reader.nextStringAuto()
-    if (reader.nextBool()) {
-      const section = reader.nextStringAuto()
-      reader.move(0x08)
+      const server: Partial<IKartPin['server']> = {}
+      server.name = reader.nextStringAuto()
+      if (reader.nextBool()) {
+        const section = reader.nextStringAuto()
+        reader.move(0x08)
 
-      server.config = {
-        section,
-        data: {}
+        server.config = {
+          section,
+          data: {}
+        }
+        let key = ''
+        while ((key = reader.nextStringAuto()) !== '')
+          server.config.data[key] = reader.nextStringAuto()
       }
-      let key = ''
-      while ((key = reader.nextStringAuto()) !== '')
-        server.config.data[key] = reader.nextStringAuto()
+      reader.move(0x04)
+
+      server.host = [
+        reader.nextByte(),
+        reader.nextByte(),
+        reader.nextByte(),
+        reader.nextByte()
+      ].join('.')
+      server.port = reader.nextShort(true)
+
+      // ... Ignore anything left as they're not quite useful here
+
+      const info: IKartPin = {
+        clientVersion,
+        id,
+        officialSiteUrl,
+        officialPatchUrl,
+        server: server as IKartPin['server']
+      }
+
+      return info
+    } catch (e) {
+      throw new Error('PIN_PARSE_ERROR', {
+        cause: e
+      })
     }
-    reader.move(0x04)
-
-    server.host = [
-      reader.nextByte(),
-      reader.nextByte(),
-      reader.nextByte(),
-      reader.nextByte()
-    ].join('.')
-    server.port = reader.nextShort(true)
-
-    // ... Ignore anything left as they're not quite useful here
-
-    const info: IKartPin = {
-      clientVersion,
-      id,
-      officialSiteUrl,
-      officialPatchUrl,
-      server: server as IKartPin['server']
-    }
-
-    return info
   }
 
   private async uncompress (filepath: string) {
