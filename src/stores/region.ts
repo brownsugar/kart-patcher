@@ -158,8 +158,7 @@ export const useRegionStore = defineStore('region', {
       this[regionCode].refreshing = true
 
       const path = this[regionCode].client.path
-      const { existsSync } = window.__KP_UTILS__.fs
-      if (!path || !existsSync(path)) {
+      if (!path) {
         this.updateStatus(regionCode, regionStatus.CLIENT_PATH_NOT_SET)
         this[regionCode].refreshing = false
         return
@@ -167,6 +166,7 @@ export const useRegionStore = defineStore('region', {
 
       const { resolve } = window.__KP_UTILS__.path
       const pinFile = regionPresets[regionCode].pinFile
+      const { existsSync } = window.__KP_UTILS__.fs
       const installed = existsSync(resolve(path, pinFile))
       let host = ''
       let port = 0
