@@ -74,7 +74,7 @@ export default {
         },
         deltaMode: {
           name: 'Smart Patch',
-          description: 'Download only the necessary update bytes (follow the game\'s own mechanism), it can increase the download speed. If you cannot complete the update successfully, please turn off this option.'
+          description: 'Download only the necessary update bytes, follow the game\'s own mechanism, it can speed up the update process. If you cannot complete the update successfully, please turn off this option.'
         }
       }
     },
@@ -114,10 +114,10 @@ export default {
       validate: 'Validating files'
     },
     registry: {
-      missing: 'Missed registry settings detected, game starting might be affected, do you want to fix it now?',
-      fixSuccess: 'Successfully fixed registry settings.',
-      fixFailed: 'Failed to fix registry settings.',
-      nothingToFix: 'Registry settings look good, nothing to fix.'
+      missing: 'Missed registry entries detected, game starting might be affected, do you want to fix it now?',
+      fixSuccess: 'Successfully fixed registry entries.',
+      fixFailed: 'Failed to fix registry entries.',
+      nothingToFix: 'Registry entries look good, nothing to fix.'
     },
     errorDialog: {
       title: 'An error occurred',
