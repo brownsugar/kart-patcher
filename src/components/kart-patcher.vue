@@ -231,12 +231,18 @@ const patchError = ref({
   message: ''
 })
 
-const primaryActionLabel = computed(() => {
+const patchMode = computed(() => {
   if ([regionStatus.LATEST_VERSION, regionStatus.CLIENT_DAMAGED].includes(props.region.status))
-    return t('patcher.repair')
+    return 'repair'
   if (props.region.status === regionStatus.CLIENT_OUTDATED)
+    return 'update'
+  return 'install'
+})
+const primaryActionLabel = computed(() => {
+  if (patchMode.value === 'repair')
+    return t('patcher.repair')
+  if (patchMode.value === 'update')
     return t('patcher.updateNow')
-
   return t('patcher.installNow')
 })
 const primaryActionDisabled = computed(() => {
@@ -333,6 +339,11 @@ on('step-start', (data) => {
   filesTotal.value = data.count ?? 0
 })
 on('step-update', (data) => {
+  if (data.type === 'step-meta') {
+    step.value.indeterminate = data.indeterminate
+    return
+  }
+
   file.value.index = data.fileIndex
 
   const increaseStepProgress = () => {
@@ -391,8 +402,11 @@ const patch = () => {
   const patchUrl = props.region?.server.patchUrl
   const version = props.region?.server.version
   const localPath = props.region?.client.path
-  if (patchUrl && version && localPath)
-    init(patchUrl, version, localPath)
+  if (patchUrl && version && localPath) {
+    init(patchUrl, version, localPath, {
+      mode: patchMode.value
+    })
+  }
 }
 
 const getRegistrySettingValue = () => {

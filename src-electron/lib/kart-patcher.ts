@@ -2,6 +2,8 @@ import { EventEmitter } from 'events'
 import { existsSync, createReadStream, createWriteStream } from 'fs'
 import { mkdir, rm } from 'fs/promises'
 import { resolve, dirname } from 'path'
+import { promisify } from 'util'
+import { execFile } from 'child_process'
 import { createGunzip } from 'zlib'
 import { move } from 'fs-extra'
 import EasyDl from 'easydl'
@@ -51,6 +53,10 @@ type stepUpdate = {
   stepIndex: number
   fileIndex: number
   type: 'file-end'
+} | {
+  stepIndex: number
+  type: 'step-meta'
+  indeterminate: boolean
 }
 type stepEndT = {
   stepIndex: number
@@ -86,6 +92,7 @@ interface KartPatcher {
   emit (event: 'error', error: stepErrorT): boolean
 }
 interface IKartPatcherOptions {
+  mode?: 'install' | 'update' | 'repair'
   deltaMode?: boolean
 }
 export interface IKartPatcherEventCallback {
@@ -152,10 +159,11 @@ class KartPatcher extends EventEmitter {
       }
       this.emit('end')
     } catch (e) {
-      if (e instanceof PatchError)
+      if (e instanceof PatchError) {
         this.emit('error', e.cause)
-      else
-        log.debug('[KartPatcher] Unhandled error', e)
+        log.debug('[KartPatcher][PatchError]', e)
+      } else
+        log.debug('[KartPatcher][UnhandledError]', e)
     }
   }
 
@@ -224,7 +232,7 @@ class KartPatcher extends EventEmitter {
         if (localFile.crc === patchFile.crc)
           continue
 
-        if (this.options.deltaMode && patchFile.path !== 'KartRider.pin') {
+        if (this.options.deltaMode) {
           if (localFile.crc === patchFile.delta1TargetCrc)
             localFile.target = 'delta1'
           else if (localFile.crc === patchFile.delta2TargetCrc)
@@ -413,6 +421,7 @@ class KartPatcher extends EventEmitter {
       count: fileCount
     })
 
+    let nativePatchNeeded = false
     for (let i = 0; i < fileCount; i++) {
       const { localFile } = this.downloadQueue[i]
 
@@ -425,12 +434,36 @@ class KartPatcher extends EventEmitter {
       await move(localFile.getDownloadPath(), localFile.getDestinationPath(), {
         overwrite: true
       })
+
+      if (localFile.target !== 'full')
+        nativePatchNeeded = true
     }
 
     await rm(this.tempPath, {
       recursive: true,
       force: true
     })
+
+    this.emit('step-update', {
+      stepIndex,
+      type: 'step-meta',
+      indeterminate: true
+    })
+
+    if (nativePatchNeeded && this.options.mode !== 'install') {
+      const patcherExecutable = resolve(this.localPath, 'Patcher.exe')
+      if (this.options.deltaMode && existsSync(patcherExecutable)) {
+        const pathArg = `'${this.localPath}'`
+        const execFileAsync = promisify(execFile)
+        await execFileAsync(patcherExecutable, [
+          '\'1\'',
+          '\'0\'',
+          `'${this.remoteUrl}'`,
+          pathArg,
+          pathArg
+        ])
+      }
+    }
 
     this.emit('step-end', {
       stepIndex
@@ -455,7 +488,7 @@ class KartPatcher extends EventEmitter {
         file: localFile.basename
       })
 
-      if (!existsSync(localFile.getDestinationPath())) {
+      if (!existsSync(localFile.path)) {
         throw new PatchError({
           code: 'FILE_NOT_EXIST',
           detail: {
@@ -463,9 +496,6 @@ class KartPatcher extends EventEmitter {
           }
         })
       }
-
-      if (localFile.target !== 'full')
-        continue
 
       // Check file CRC
       await localFile.loadMeta()

@@ -39,7 +39,8 @@ const api: IApiCore = {
           version: args[1],
           localPath: args[2],
           connections: pref.connections,
-          deltaMode: pref.deltaMode
+          deltaMode: pref.deltaMode,
+          ...args[3]
         })
     },
     on: (event, listener) => {
