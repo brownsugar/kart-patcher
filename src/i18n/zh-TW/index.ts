@@ -100,7 +100,7 @@ export default {
     fixRegistry: '修復註冊表',
     ready: '就緒',
     inProgress: '更新進行中',
-    done: '更新完成',
+    done: '完成',
     waiting: '等候操作',
     busying: '請稍候...',
     noLeaving: '更新過程中無法離開，請靜候更新完成。',

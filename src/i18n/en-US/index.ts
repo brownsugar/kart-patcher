@@ -100,7 +100,7 @@ export default {
     fixRegistry: 'Fix registry',
     ready: 'Ready',
     inProgress: 'Update in progress',
-    done: 'Update completed',
+    done: 'Completed',
     waiting: 'Waiting for user action',
     busying: 'Please wait...',
     noLeaving: 'No leaving during the update process, please wait for the update to complete.',
