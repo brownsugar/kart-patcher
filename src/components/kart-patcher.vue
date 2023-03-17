@@ -137,7 +137,7 @@
           {{ t('patcher.errorDialog.description') }}
         </div>
         <div class="text-caption q-mt-sm">
-          <div>
+          <div v-if="patchError.code">
             <strong>{{ t('patcher.errorDialog.code') }}</strong>
             <q-chip
               :ripple="false"
@@ -400,7 +400,17 @@ on('error', (error) => {
   patchError.value.message = message
   patchError.value.dialog = true
 })
-const patch = () => {
+const patch = async () => {
+  if (patchMode.value !== 'install') {
+    const processRunning = await window.__KP_APP__.checkProcessRunning(props.region.exeFile)
+    if (processRunning) {
+      patchError.value.code = ''
+      patchError.value.message = t('patcher.errorDialog.processRunning')
+      patchError.value.dialog = true
+      return
+    }
+  }
+
   const patchUrl = props.region?.server.patchUrl
   const version = props.region?.server.version
   const localPath = props.region?.client.path

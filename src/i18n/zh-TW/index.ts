@@ -124,7 +124,8 @@ export default {
       description: '更新過程中發生錯誤，請稍後重試。',
       code: '錯誤代碼：',
       message: '錯誤訊息：',
-      insufficientDiskSpace: '硬碟空間不足，請空出足夠的空間後再試。（需要空間：{estimated}，目前剩餘空間：{free}）'
+      insufficientDiskSpace: '硬碟空間不足，請空出足夠的空間後再試。（需要空間：{estimated}，目前剩餘空間：{free}）',
+      processRunning: '遊戲主程式執行中，請先關閉後重試。'
     }
   }
 }

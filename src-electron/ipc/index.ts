@@ -1,3 +1,4 @@
+import { execSync } from 'child_process'
 import { dialog, shell } from 'electron'
 import Registry from 'winreg'
 import type { BrowserWindow, IpcMainInvokeEvent } from 'electron'
@@ -46,6 +47,19 @@ const handlers: IIpcConfig[] = [
             reject(error)
         })
         resolve()
+      })
+    }
+  },
+  {
+    channel: 'app:checkProcessRunning',
+    listener: (_e, args) => {
+      return new Promise((resolve) => {
+        try {
+          const result = execSync('tasklist')
+          resolve(result.toString().toLowerCase().includes(args?.name.toLowerCase()))
+        } catch (e) {
+          resolve(false)
+        }
       })
     }
   },

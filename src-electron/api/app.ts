@@ -14,6 +14,7 @@ interface IApiApp {
   close (): void
   readRegistry (path: string | string[]): Promise<RegistryItem[] | null>
   writeRegistry (path: string, name: string, value: string): Promise<boolean>
+  checkProcessRunning (name: string): Promise<boolean>
   selectDirectory (options?: OpenDialogOptions): Promise<any>
   openDirectory (path: string): void
   setProgressBar (progress: boolean | number): void
@@ -43,6 +44,9 @@ const api: IApiApp = {
     } catch (e) {
       return false
     }
+  },
+  checkProcessRunning: async (name) => {
+    return await ipcRenderer.invoke('app:checkProcessRunning', { name })
   },
   selectDirectory: options =>
     ipcRenderer.invoke('app:selectDirectory', { options }),

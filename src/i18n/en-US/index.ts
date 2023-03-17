@@ -124,7 +124,8 @@ export default {
       description: 'There was an error during the update process, please try again later.',
       code: 'Error code: ',
       message: 'Error message: ',
-      insufficientDiskSpace: 'Insufficient disk space, please free up enough space and try again. (Required space: {estimated}, remaining space: {free})'
+      insufficientDiskSpace: 'Insufficient disk space, please free up enough space and try again. (Required space: {estimated}, remaining space: {free})',
+      processRunning: 'Game process is running, please close it and try again.'
     }
   }
 }
