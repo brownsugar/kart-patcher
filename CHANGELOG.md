@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.1.0] - 2023-03-17
+### :sparkles: New Features
+- [`fe9f987`](https://github.com/brownsugar/kart-patcher/commit/fe9f987333c7bed5fa22ce46c148a741ea952945) - **patcher**: process delta files with native patcher when needed *(commit by [@brownsugar](https://github.com/brownsugar))*
+- [`efe3f95`](https://github.com/brownsugar/kart-patcher/commit/efe3f952157747e01ecdf996aa69cc81541b4df7) - **i18n**: update translation *(commit by [@brownsugar](https://github.com/brownsugar))*
+- [`6d9f619`](https://github.com/brownsugar/kart-patcher/commit/6d9f6194898fc53bb55ff13e02d8b292432fe845) - **patcher**: label style improvement *(commit by [@brownsugar](https://github.com/brownsugar))*
+- [`fef0fe3`](https://github.com/brownsugar/kart-patcher/commit/fef0fe3da51cc58144825da53c358e3c75c09c5d) - **patcher**: add process running checking before patching process starts *(commit by [@brownsugar](https://github.com/brownsugar))*
+
+### :wrench: Chores
+- [`9d1905a`](https://github.com/brownsugar/kart-patcher/commit/9d1905a98f97cc9179aeee5a4ac8a29444a895bd) - update browserslist config *(commit by [@brownsugar](https://github.com/brownsugar))*
+- [`1742513`](https://github.com/brownsugar/kart-patcher/commit/1742513a0809e66e466e363db8dd4b4f6c67b3a7) - upgrade deps *(commit by [@brownsugar](https://github.com/brownsugar))*
+
+
 ## [v1.0.0] - 2023-03-08
 ### :sparkles: New Features
 - [`2739dae`](https://github.com/brownsugar/kart-patcher/commit/2739dae75beea99864ab3aa2a95b8f8bf0f5b8ed) - **patcher**: add step to check disk space before processing *(commit by [@brownsugar](https://github.com/brownsugar))*
@@ -30,3 +42,4 @@
 
 [v0.0.6]: https://github.com/brownsugar/kart-patcher/compare/v0.0.5...v0.0.6
 [v1.0.0]: https://github.com/brownsugar/kart-patcher/compare/v0.0.6...v1.0.0
+[v1.1.0]: https://github.com/brownsugar/kart-patcher/compare/v1.0.0...v1.1.0
