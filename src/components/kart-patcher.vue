@@ -51,12 +51,14 @@
     <q-separator class="q-my-md" />
     <div class="q-py-sm">
       <div class="row justify-between">
-        <div
+        <q-badge
           v-if="filesTotal"
-          class="text-accent q-mr-xs"
-        >
-          {{ fileCounterLabel }}
-        </div>
+          class="q-mr-xs"
+          color="generic"
+          :label="fileCounterLabel"
+          transparent
+          outline
+        />
         <div class="col ellipsis">
           {{ fileStatusLabel }}
         </div>
@@ -284,7 +286,7 @@ const stepProgress = computed(() => {
   return Number(value.toFixed(1))
 })
 const fileCounterLabel = computed(() => {
-  return `[${file.value.index + 1} / ${filesTotal.value}]`
+  return `${file.value.index + 1} / ${filesTotal.value}`
 })
 const fileStatusLabel = computed(() => {
   if (!step.value.active)
