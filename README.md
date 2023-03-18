@@ -4,7 +4,7 @@ A modern client patcher and installer of KartRider.
 
 <p align="center">
   <img
-    src="https://user-images.githubusercontent.com/2935980/223720474-b823c29a-48f1-4e6b-909d-913d03caff64.gif"
+    src="https://user-images.githubusercontent.com/2935980/226101648-98b0d27a-221d-48b6-b19d-0b6da46fb663.gif"
     alt="Kart Patcher demo"
   />
 </p>
