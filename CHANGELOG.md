@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.1.1] - 2023-03-18
+### :sparkles: New Features
+- [`d79c508`](https://github.com/brownsugar/kart-patcher/commit/d79c50851ab8b55655857cad96a3629442383b4d) - **patcher**: disable delta mode for Korean server *(commit by [@brownsugar](https://github.com/brownsugar))*
+
+### :wrench: Chores
+- [`95cb013`](https://github.com/brownsugar/kart-patcher/commit/95cb013f7f2801c3ab6b0c12718979fa21b8e113) - **readme**: update Patcher demo *(commit by [@brownsugar](https://github.com/brownsugar))*
+
+
 ## [v1.1.0] - 2023-03-17
 ### :sparkles: New Features
 - [`fe9f987`](https://github.com/brownsugar/kart-patcher/commit/fe9f987333c7bed5fa22ce46c148a741ea952945) - **patcher**: process delta files with native patcher when needed *(commit by [@brownsugar](https://github.com/brownsugar))*
@@ -43,3 +51,4 @@
 [v0.0.6]: https://github.com/brownsugar/kart-patcher/compare/v0.0.5...v0.0.6
 [v1.0.0]: https://github.com/brownsugar/kart-patcher/compare/v0.0.6...v1.0.0
 [v1.1.0]: https://github.com/brownsugar/kart-patcher/compare/v1.0.0...v1.1.0
+[v1.1.1]: https://github.com/brownsugar/kart-patcher/compare/v1.1.0...v1.1.1
