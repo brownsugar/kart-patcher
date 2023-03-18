@@ -24,7 +24,7 @@ A modern client patcher and installer of KartRider.
  - **Portable**
    - Single executable without installation needed.
  - **More than just a patcher**
-   - Support fresh game client installation too.
+   - Support fresh game client installation, client repair and also registry fixing.
 
 ## Core features
 
@@ -33,7 +33,7 @@ A modern client patcher and installer of KartRider.
 Install the fresh game client in a specified path.
 
 <img
-  src="https://user-images.githubusercontent.com/2935980/223738975-e01af533-ba24-4c81-912f-32ee4d93379f.png"
+  src="https://user-images.githubusercontent.com/2935980/226136148-8375c5e2-e3b9-4a48-8996-40b4c248eeba.png"
   width="600"
   alt="Installation"
 />
@@ -110,10 +110,10 @@ Download only the necessary update bytes, follow the game's own mechanism (aka t
 
 If you cannot complete the update successfully, please turn off this option. Patch for Korean server does not support this feature yet.
 
-\* The delta files will be merged with the original file by game's patcher to generate the final file.
+\* The delta files (.delta1, .delta2) will be merged with the original file by game's patcher to generate the final file.
 
 <img
-  src="https://user-images.githubusercontent.com/2935980/223740450-b3cb82f0-dae4-4b12-9e5d-8d4fcfa9cf1a.png"
+  src="https://user-images.githubusercontent.com/2935980/226136325-7bdcd2f5-be76-43e8-8197-b4da2f7bf8eb.png"
   width="600"
   alt="Download Settings"
 />
