@@ -416,7 +416,10 @@ const patch = async () => {
   const localPath = props.region?.client.path
   if (patchUrl && version && localPath) {
     init(patchUrl, version, localPath, {
-      mode: patchMode.value
+      mode: patchMode.value,
+      deltaMode: props.region.code === 'kr'
+        ? false
+        : window.__KP_STORE__.preference.get('download.deltaMode')
     })
   }
 }

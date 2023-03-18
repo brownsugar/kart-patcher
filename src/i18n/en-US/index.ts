@@ -74,7 +74,7 @@ export default {
         },
         deltaMode: {
           name: 'Smart Patch',
-          description: 'Download only the necessary update bytes, follow the game\'s own mechanism, it can speed up the update process. If you cannot complete the update successfully, please turn off this option.'
+          description: 'Download only the necessary update bytes, follow the game\'s own mechanism, it can speed up the update process. If you cannot complete the update successfully, please turn off this option. (Not available for Korean server yet.)'
         }
       }
     },

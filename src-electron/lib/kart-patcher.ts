@@ -450,9 +450,9 @@ class KartPatcher extends EventEmitter {
       indeterminate: true
     })
 
-    if (nativePatchNeeded && this.options.mode !== 'install') {
+    if (nativePatchNeeded && this.options.mode !== 'install' && this.options.deltaMode) {
       const patcherExecutable = resolve(this.localPath, 'Patcher.exe')
-      if (this.options.deltaMode && existsSync(patcherExecutable)) {
+      if (existsSync(patcherExecutable)) {
         const pathArg = `'${this.localPath}'`
         const execFileAsync = promisify(execFile)
         await execFileAsync(patcherExecutable, [

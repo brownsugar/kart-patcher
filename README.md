@@ -108,7 +108,7 @@ If some files cannot be downloaded successfully, try to decrease this number, de
 
 Download only the necessary update bytes, follow the game's own mechanism (aka the delta files\*), it can speed up the update process.
 
-If you cannot complete the update successfully, please turn off this option.
+If you cannot complete the update successfully, please turn off this option. Patch for Korean server does not support this feature yet.
 
 \* The delta files will be merged with the original file by game's patcher to generate the final file.
 
